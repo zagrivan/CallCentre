@@ -1,0 +1,24 @@
+# ninja log v5
+3	6341	1700084330533224158	CMakeFiles/CallCentre.dir/src/beast_async_tcp_server.cpp.o	add26396bda59631
+7194	7455	1700658371977913615	CallCentre	cd2d327161bec1f1
+3	1970	1700656999003089988	CMakeFiles/mytest.dir/test.cpp.o	88296b6bafe541f1
+1970	2018	1700656999051097451	mytest	ca0aa5fe6fb33edc
+3	7194	1700658371705918133	CMakeFiles/CallCentre.dir/src/server.cpp.o	50d4bb976c4b8597
+1	505	1699709120718982798	CMakeFiles/CallCentre.dir/src/main.cpp.o	8e4c9ce293377891
+0	329	1699621868679729200	CMakeFiles/CallCentre.dir/src/Call.cpp.o	61fc368af26d5126
+7	7201	1700688860293105105	CMakeFiles/CallCentre.dir/src/Log.cpp.o	66cae2fb6cd7e263
+6	14313	1700688867393115806	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+14313	14951	1700688868049116792	CallCentre	4bd21c60f13b83f7
+4	10743	1700690404740131011	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+10746	11293	1700690405304136186	CallCentre	4bd21c60f13b83f7
+5	5456	1700693220216885733	CMakeFiles/CallCentre.dir/src/Log.cpp.o	66cae2fb6cd7e263
+5	11236	1700693225984905564	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+11236	11796	1700693226560907546	CallCentre	4bd21c60f13b83f7
+5	8115	1700696827034725111	CMakeFiles/CallCentre.dir/src/Log.cpp.o	66cae2fb6cd7e263
+5	14149	1700696833058746548	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+14149	14741	1700696833674748744	CallCentre	4bd21c60f13b83f7
+4	10442	1700697952741837373	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+10442	10988	1700697953301800135	CallCentre	4bd21c60f13b83f7
+4	5758	1700764482476767909	CMakeFiles/CallCentre.dir/src/Log.cpp.o	66cae2fb6cd7e263
+4	12111	1700764488818221665	CMakeFiles/CallCentre.dir/src/server.cpp.o	6fc54c4ed11f7154
+12111	12776	1700764489502381318	CallCentre	4bd21c60f13b83f7

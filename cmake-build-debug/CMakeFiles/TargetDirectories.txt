@@ -1,0 +1,4 @@
+/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/CallCentre.dir
+/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/mytest.dir
+/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/rebuild_cache.dir
