@@ -8,12 +8,25 @@
 #include "IncomingQueue.h"
 #include "Operators.h"
 #include "Log.h"
+#include "Operators_2.h"
+#include "RandGen.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
+
+
+#define COUNT_OPERATORS 5
+#define INC_QUEUE_SIZE 5
+#define LOG_SERVER_LEVEL "info"
+#define LOG_OPERATORS_LEVEL "trace"
+// in seconds
+#define RAND_GEN_ERL_SHAPE 1
+#define RAND_GEN_ERL_SCALE 10
+#define TIME_IN_QUEUE 5
+
 
 
 int main(int argc, char* argv[])
@@ -34,9 +47,10 @@ int main(int argc, char* argv[])
     // The io_context is required for all I/O
     net::io_context ioc{};
 
-    call_c::Operators operators{ioc, 5, 5, 5, 5, 10};
+    call_c::Operators2 operators{ioc, COUNT_OPERATORS, INC_QUEUE_SIZE};
 
-    call_c::Log::Init();
+    call_c::Log::Init(LOG_SERVER_LEVEL, LOG_OPERATORS_LEVEL);
+    call_c::RandGen::Init(RAND_GEN_ERL_SHAPE, RAND_GEN_ERL_SCALE, TIME_IN_QUEUE);
 
     // Create and launch a listening port
     std::make_shared<call_c::listener>(

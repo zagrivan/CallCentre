@@ -87,10 +87,7 @@ namespace call_c
 
         void update()
         {
-            // здесь придется проверять, есть ли установленный таймер на крайний звонок в очереди
-            // если таймер уже установлен то просто ждем его выполнения, если таймер не установлен, то обрабатываем крайний
-            // звонок в очереди, либо закидываем на свободного оператора, либо устанавливаем таймер на вызов
-
+            // ждем, пока появятся звонки в очереди
             incCalls_.wait();
 
             C_OPERATORS_DEBUG("INCQUEUE.wait() is awake, there are calls, in queue {} calls", incCalls_.count());
@@ -100,7 +97,6 @@ namespace call_c
                 C_OPERATORS_TRACE("there are {} free operators", cntFree_);
                 --cntFree_;
                 auto call = incCalls_.pop_front();
-                // todo либо здесь ошибка, сразу извлекать оператора
                 net::dispatch(strand_, boost::bind(&Operators::add_call, this, call));
             } else
             {
@@ -129,15 +125,12 @@ namespace call_c
             C_OPERATORS_INFO("CallID:{} was given to the OpID:{}, end of the call at {}",
                              call->callID, OpID, tp_to_strHMS(call->dt_completion));
 
-            // если таймер сработает позже, чем конец нового звонка, то меняем таймер
+            // если таймер сработает позже, чем конец нового звонка, или не запущен, то ставим таймер
             if (!isTimerOperatorWorking_ || timerOperator_.expiry() > call->dt_completion)
             {
                 C_OPERATORS_DEBUG("timerOperator is {} working", (isTimerOperatorWorking_ ? "already" : "not"));
-                //TODO сделать функцию, которая переназначает таймер
                 isTimerOperatorWorking_ = true;
-                // число отмененных операций
                 timerOperator_.expires_at(nearestCallsEnd_.top().first);
-
                 timerOperator_.async_wait(
                         boost::asio::bind_executor(
                                 strand_,
@@ -145,8 +138,6 @@ namespace call_c
                                             nearestCallsEnd_.top().second)));
                 C_OPERATORS_DEBUG("timerOperator expires at {}", tp_to_strHMS(timerOperator_.expiry()));
             }
-
-            // ставим таймер и выходим из функции
         }
 
         void set_call_timer()

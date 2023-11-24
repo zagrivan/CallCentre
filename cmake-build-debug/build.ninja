@@ -63,6 +63,13 @@ build CMakeFiles/CallCentre.dir/src/Log.cpp.o: CXX_COMPILER__CallCentre_unscanne
   OBJECT_DIR = CMakeFiles/CallCentre.dir
   OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
 
+build CMakeFiles/CallCentre.dir/src/RandGen.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/RandGen.cpp || cmake_object_order_depends_target_CallCentre
+  DEP_FILE = CMakeFiles/CallCentre.dir/src/RandGen.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/CallCentre.dir
+  OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target CallCentre
@@ -71,7 +78,7 @@ build CMakeFiles/CallCentre.dir/src/Log.cpp.o: CXX_COMPILER__CallCentre_unscanne
 #############################################
 # Link the executable CallCentre
 
-build CallCentre: CXX_EXECUTABLE_LINKER__CallCentre_Debug CMakeFiles/CallCentre.dir/src/server.cpp.o CMakeFiles/CallCentre.dir/src/Log.cpp.o
+build CallCentre: CXX_EXECUTABLE_LINKER__CallCentre_Debug CMakeFiles/CallCentre.dir/src/server.cpp.o CMakeFiles/CallCentre.dir/src/Log.cpp.o CMakeFiles/CallCentre.dir/src/RandGen.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/CallCentre.dir
   POST_BUILD = :
@@ -95,6 +102,13 @@ build CMakeFiles/mytest.dir/test.cpp.o: CXX_COMPILER__mytest_unscanned_Debug /ho
   OBJECT_DIR = CMakeFiles/mytest.dir
   OBJECT_FILE_DIR = CMakeFiles/mytest.dir
 
+build CMakeFiles/mytest.dir/src/RandGen.cpp.o: CXX_COMPILER__mytest_unscanned_Debug /home/ivan/CPP/CallCentre/src/RandGen.cpp || cmake_object_order_depends_target_mytest
+  DEP_FILE = CMakeFiles/mytest.dir/src/RandGen.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/mytest.dir
+  OBJECT_FILE_DIR = CMakeFiles/mytest.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target mytest
@@ -103,7 +117,7 @@ build CMakeFiles/mytest.dir/test.cpp.o: CXX_COMPILER__mytest_unscanned_Debug /ho
 #############################################
 # Link the executable mytest
 
-build mytest: CXX_EXECUTABLE_LINKER__mytest_Debug CMakeFiles/mytest.dir/test.cpp.o
+build mytest: CXX_EXECUTABLE_LINKER__mytest_Debug CMakeFiles/mytest.dir/test.cpp.o CMakeFiles/mytest.dir/src/RandGen.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/mytest.dir
   POST_BUILD = :

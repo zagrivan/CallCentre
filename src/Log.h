@@ -2,6 +2,7 @@
 #define CALLCENTRE_LOG_FUNC_H
 
 #include <iostream>
+#include <map>
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -14,13 +15,15 @@ namespace call_c
     class Log
     {
     public:
-        static void Init();
+        static void Init(const std::string& levelServer = "trace", const std::string& levelOperator = "trace");
 
         static std::shared_ptr<spdlog::logger>& GetCDRLogger() { return cdrLog; }
         static std::shared_ptr<spdlog::logger>& GetServerLogger() { return serverLog; }
         static std::shared_ptr<spdlog::logger>& GetOperatorsLogger() { return operatorsLog; }
 
     private:
+        static std::map<std::string, spdlog::level::level_enum> loggingLevels;
+
         static std::shared_ptr<spdlog::logger> cdrLog;
         static std::shared_ptr<spdlog::logger> serverLog;
         static std::shared_ptr<spdlog::logger> operatorsLog;

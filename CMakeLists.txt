@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(CallCentre
         src/server.cpp
         src/Log.cpp
+        src/RandGen.cpp
 )
 
-add_executable(mytest test.cpp)
+add_executable(mytest test.cpp
+        src/RandGen.cpp)
 
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS} libs/include)

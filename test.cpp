@@ -1,9 +1,17 @@
 #include <utility>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include <random>
+#include <string>
 
 #include "src/includes.h"
 
 #include "src/IncomingQueue.h"
 #include "src/Call.h"
+#include "src/handle_req_resp.h"
+#include "src/RandGen.h"
+
 
 namespace call_c {
     class hi
@@ -72,15 +80,25 @@ namespace call_c {
 
 int main()
 {
+
+    using namespace std::chrono;
     using namespace call_c;
 
-    tsqueue <std::shared_ptr<Call>> ts(5);
+    RandGen::Init(1, 10, 5);
 
-    ts.push_back(std::make_shared<Call>(101));
-    ts.pop_front();
+    std::vector<milliseconds> v{};
 
-    auto ptr = ts.front();
-    std::cout << ptr;
+    for (int i = 0; i != 10; ++i)
+    {
+        v.push_back(RandGen::getRandErlang());
+    }
+
+    std::sort(v.begin(), v.end());
+
+    for (auto val: v)
+    {
+        std::cout << val.count() << ' ';
+    }
 
     return 0;
 }
