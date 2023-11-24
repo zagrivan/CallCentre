@@ -39,11 +39,13 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
-namespace call_c {
+namespace call_c
+{
 
     using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
-    class Operators {
+    class Operators
+    {
 
     public:
         Operators(net::io_context &ioc, int countOp, size_t incCallsSize, int Rmin, int Rmax, int callDuration)
@@ -51,8 +53,10 @@ namespace call_c {
                   count_(countOp), Rmin_(Rmin), Rmax_(Rmax), incCalls_(incCallsSize),
                   timerIncCall_(ioc), timerOperator_(ioc, std::chrono::days(100)),
                   freeOps_(countOp),
-                  callDuration_(callDuration) {
-            for (int i = 0; i != countOp; ++i) {
+                  callDuration_(callDuration)
+        {
+            for (int i = 0; i != countOp; ++i)
+            {
                 freeOps_[i] = i;
             }
             cntFree_ = countOp;
@@ -60,24 +64,29 @@ namespace call_c {
         }
 
 
-        tsqueue<Call> &getIncCalls() {
+        tsqueue<std::shared_ptr<Call>> &getIncCalls()
+        {
             return incCalls_;
         }
 
-        void run() {
+        void run()
+        {
             C_OPERATORS_INFO("OPERATORS ARE RUNNING");
-            while (1) {
+            while (1)
+            {
                 update();
             }
         }
 
-        void stop() {
+        void stop()
+        {
 
         }
 
     private:
 
-        void update() {
+        void update()
+        {
             // здесь придется проверять, есть ли установленный таймер на крайний звонок в очереди
             // если таймер уже установлен то просто ждем его выполнения, если таймер не установлен, то обрабатываем крайний
             // звонок в очереди, либо закидываем на свободного оператора, либо устанавливаем таймер на вызов
@@ -89,152 +98,161 @@ namespace call_c {
             if (cntFree_)  // можно обращаться к atomic bool, спрашивать есть ли свободные операторы, а в strand обращаться к freeOps_
             {
                 C_OPERATORS_TRACE("there are {} free operators", cntFree_);
+                --cntFree_;
                 auto call = incCalls_.pop_front();
-                auto OpID = get_free_operator();
-                net::dispatch(strand_, boost::bind(&Operators::add_call, this, call, OpID));
-            } else {
+                // todo либо здесь ошибка, сразу извлекать оператора
+                net::dispatch(strand_, boost::bind(&Operators::add_call, this, call));
+            } else
+            {
                 C_OPERATORS_TRACE("there are no free operators, cntFree_ = {}", cntFree_);
                 set_call_timer();
                 // можно попробовать ждать здесь, пока не удалится крайний звонок в очереди
-                C_OPERATORS_DEBUG("waiting for a free operator, in queue {} calls, cntFree_ = {}", incCalls_.count(), cntFree_);
+                C_OPERATORS_DEBUG("waiting for a free operator, in queue {} calls, cntFree_ = {}", incCalls_.count(),
+                                  cntFree_);
                 wait_free_op();
                 // отменяем таймер и все асинх операции связанные с ним
                 auto cancelled = timerIncCall_.cancel();
-                C_OPERATORS_DEBUG("there is a {} free operator, {} async operations cancelled, timerIncCall_.cancel()", cntFree_, cancelled);
+                C_OPERATORS_DEBUG("there is a {} free operator, {} async operations cancelled, timerIncCall_.cancel()",
+                                  cntFree_, cancelled);
             }
         }
 
-        void add_call(Call call, int OpID) {
-            // если вдруг единственный звонок в очереди удалит on_queue_expiry, после проверки
-//            if (incCalls_.empty()) {
-//                C_OPERATORS_WARN("IN add_call(), BUT THERE ARE NO CALLS");
-//                return;
-//            }
-//
-//            auto call = incCalls_.pop_front();
-
-            call.operatorID = OpID;
-            call.dt_resp = std::chrono::system_clock::now();
-            call.dt_completion = call.dt_resp + callDuration_;
+        void add_call(std::shared_ptr<Call> call)
+        {
+            auto OpID = get_free_operator();
+            call->operatorID = OpID;
+            call->dt_resp = std::chrono::system_clock::now();
+            call->dt_completion = call->dt_resp + callDuration_;
             operators_[OpID] = call;
-            nearestCallsEnd_.emplace(call.dt_completion, OpID);
+            nearestCallsEnd_.emplace(call->dt_completion, OpID);
 
             C_OPERATORS_INFO("CallID:{} was given to the OpID:{}, end of the call at {}",
-                             call.callID, OpID, tp_to_strHMS(call.dt_completion));
+                             call->callID, OpID, tp_to_strHMS(call->dt_completion));
 
-            const auto currExpiry = timerOperator_.expiry();
-            const auto now = std::chrono::system_clock::now(); // maybe unused
             // если таймер сработает позже, чем конец нового звонка, то меняем таймер
-            if (!isTimerOperatorWorking_ || currExpiry > call.dt_completion) {
+            if (!isTimerOperatorWorking_ || timerOperator_.expiry() > call->dt_completion)
+            {
                 C_OPERATORS_DEBUG("timerOperator is {} working", (isTimerOperatorWorking_ ? "already" : "not"));
                 //TODO сделать функцию, которая переназначает таймер
                 isTimerOperatorWorking_ = true;
                 // число отмененных операций
-                auto cancelled = timerOperator_.expires_at(nearestCallsEnd_.top().first);
-
-                if (cancelled)
-                    std::cerr << "add_call: number of cancelled operations " << cancelled << '\n'
-                              << "\texpiry at: " << tp_to_strHMS(currExpiry)
-                              << '\n' // если currExpiry < now(), то таймер уже сработал
-                              << "\tnow: " << tp_to_strHMS(now) << '\n'
-                              << std::flush; // но при этом откуда то взялись отмененные операции!!!
+                timerOperator_.expires_at(nearestCallsEnd_.top().first);
 
                 timerOperator_.async_wait(
                         boost::asio::bind_executor(
                                 strand_,
                                 boost::bind(&Operators::on_end_call, this, net::placeholders::error,
-                                            OpID))); //TODO boost::bind!!!
+                                            nearestCallsEnd_.top().second)));
+                C_OPERATORS_DEBUG("timerOperator expires at {}", tp_to_strHMS(timerOperator_.expiry()));
             }
 
             // ставим таймер и выходим из функции
         }
 
-        void set_call_timer() {
+        void set_call_timer()
+        {
             // если свободных операторов нет, то ставим таймер и ждем,
             // пока сработает таймер, или освободится оператор
             auto call = incCalls_.front();
-            call.dt_expiry = call.dt_req + Rmin_;
-            auto cancelled = timerIncCall_.expires_at(call.dt_expiry);
-            C_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled = {}", tp_to_strHMS(call.dt_expiry), cancelled);
+            call->dt_expiry = call->dt_req + Rmin_;
+            auto cancelled = timerIncCall_.expires_at(call->dt_expiry);
+            C_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled = {}, CallID:{}", tp_to_strHMS(call->dt_expiry),
+                              cancelled, call->callID);
 
             timerIncCall_.async_wait(
                     boost::asio::bind_executor(
                             strand_,
-                            boost::bind(&Operators::on_queue_expiry, this, net::placeholders::error, call.callID)));
+                            boost::bind(&Operators::on_queue_expiry, this, net::placeholders::error, call->callID)));
         }
 
-        void on_end_call(const boost::system::error_code &ec, int expectedOpID) {
-            if (ec == net::error::operation_aborted) {
-                std::cout << "on_end_call: expiry is changed\tOpID: " << expectedOpID << '\n';
+        void on_end_call(const boost::system::error_code &ec, int expectedOpID)
+        {
+            if (ec == net::error::operation_aborted)
+            {
+                C_OPERATORS_DEBUG("on_end_call: timerOperator expiry is changed, OpID:{}", expectedOpID);
                 return;
-            } else if (ec) {
-                fail(ec, "on_end_call");
+            } else if (ec)
+            {
+                C_OPERATORS_ERROR("on_end_call: {}", ec.message());
                 return;
             }
 
             auto OpID = nearestCallsEnd_.top().second;
-            nearestCallsEnd_.pop();
-
             assert(OpID == expectedOpID && "expectedOpID != OpID from the heap");
 
-            auto call = operators_[OpID];
-//        operators_[OpID] = nullptr;
+            nearestCallsEnd_.pop();
 
-            std::cout << "on_end_call: end call\tOpID: " << OpID << '\n';
-            std::cout << "call " << call.CgPN << "is completed\n";
+//            auto call = operators_[OpID]; // TODO move
+//            operators_[OpID] = nullptr;
+            auto call = std::move(operators_[OpID]);
 
-            freeOps_.push_back(OpID);
-            ++cntFree_;
+            C_OPERATORS_INFO("Call completed, CallID:{}, OpID:{}", call->callID, OpID);
 
-            {
-                // будим update()
-                std::unique_lock<std::mutex> ul(muxBlocking);
-                cvBlocking.notify_one();
-            }
+            release_operator(OpID); // TODO где то здесь ошибка
 
             // заново устанавливаем таймер, если еще есть звонки в куче
-            if (!nearestCallsEnd_.empty()) {
-                auto newExpiry = nearestCallsEnd_.top().first;
-                timerOperator_.expires_at(newExpiry);
+            if (!nearestCallsEnd_.empty())
+            {
+                timerOperator_.expires_at(nearestCallsEnd_.top().first);
                 timerOperator_.async_wait(
                         boost::asio::bind_executor(
                                 strand_,
                                 boost::bind(&Operators::on_end_call, this, net::placeholders::error,
-                                            nearestCallsEnd_.top().second))); //TODO boost::bind!!!
-            } else {
+                                            nearestCallsEnd_.top().second)));
+                C_OPERATORS_DEBUG("timerOperator expires at {}, from on_end_call()", tp_to_strHMS(timerOperator_.expiry()));
+            } else
+            {
                 isTimerOperatorWorking_ = false; // timer is not working
+                C_OPERATORS_DEBUG("timerOperator is not working, from on_end_call()");
             }
 
             // поместить оператора в свободных, залогировать вызов
         }
 
-        void on_queue_expiry(const boost::system::error_code &ec, uint32_t callID) {
+        void on_queue_expiry(const boost::system::error_code &ec, uint32_t expectedCallID)
+        {
             // срабатывает, когда звонок в очереди ждет слишком долго,
             // время call->dt_expiry уже прошло
-            if (ec == boost::asio::error::operation_aborted) {
-                std::cerr
-                        << "on_queue_expiry: async operation is cancelled. The call was picked up by a free operator\n";
-            } else if (ec) {
-                std::cerr << "on_queue_expiry: unknown error\n";
-            } else {
-                // отправляем в логгер, что звонок expiry
-                if (incCalls_.empty() || incCalls_.front().callID != callID)
-                    return;
-                // TODO подумать над проблемой, когда звонков в очереди уже нет, но функция была отправлена в движок asio,
-                // TODO и попыталась удалить из очереди
-                auto call = incCalls_.pop_front();
-                std::cout << "on_queue_expiry: callID_" << call.callID
-                          << " removed from the queue due to expiration date\n";
+            if (ec == net::error::operation_aborted)
+            {
+                C_OPERATORS_DEBUG(
+                        "on_queue_expiry: async operation is cancelled. The call was picked up by a free operator");
+            } else if (ec)
+            {
+                C_OPERATORS_WARN("on_queue_expiry: {}", ec.message());
+            } else
+            {
+                try
+                {
+                    if (incCalls_.front()->callID != expectedCallID)
+                    {
+                        C_OPERATORS_DEBUG("on_queue_expiry: expectedCallID:{} != CallID", expectedCallID);
+                        return;
+                    }
+                    auto call = incCalls_.pop_front();
 
-                if (!incCalls_.empty() && !cntFree_) {
+                    assert(call->callID == expectedCallID && "the incorrect call was removed from the queue");
+                    C_OPERATORS_INFO("CallID:{} removed from the queue due to expiration date",
+                                      call->callID);
+                }
+                catch (std::exception &e)
+                {
+                    C_OPERATORS_WARN("on_queue_expiry: {}", e.what());
+                    return;
+                }
+
+                if (!incCalls_.empty() && !cntFree_)
+                {
                     // ставим таймер на удаление запроса из очереди снова
                     set_call_timer();
                 }
             }
         }
 
-        void wait_free_op() {
-            while (cntFree_ == 0) {
+        void wait_free_op()
+        {
+            while (cntFree_ == 0)
+            {
                 std::unique_lock<std::mutex> ul(muxBlocking);
                 cvBlocking.wait(ul);
             }
@@ -242,10 +260,21 @@ namespace call_c {
 
         int get_free_operator()
         {
+            if (freeOps_.empty())
+                throw std::out_of_range("freeOps is empty");
             auto OpID = freeOps_.front();
             freeOps_.pop_front();
-            --cntFree_;
+//            --cntFree_;
             return OpID;
+        }
+
+        void release_operator(int OpID)
+        {
+            freeOps_.push_back(OpID);
+            ++cntFree_;
+            // будим update()
+            std::unique_lock<std::mutex> ul(muxBlocking);
+            cvBlocking.notify_one();
         }
 
 
@@ -265,11 +294,11 @@ namespace call_c {
         net::strand<net::io_context::executor_type> strand_;
 
         net::system_timer timerIncCall_;
-        tsqueue<Call> incCalls_;
+        tsqueue<std::shared_ptr<Call>> incCalls_;
 
         std::atomic<bool> isTimerOperatorWorking_;
         net::system_timer timerOperator_;
-        std::vector<Call> operators_;
+        std::vector<std::shared_ptr<Call>> operators_;
 
         std::deque<int> freeOps_;
         std::atomic<int> cntFree_;

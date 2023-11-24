@@ -21,11 +21,11 @@ namespace call_c {
         tcp::acceptor acceptor_;
         uint32_t callId_{100};
 
-        tsqueue<Call> &incCalls;
+        tsqueue<std::shared_ptr<Call>> &incCalls_;
 
     public:
-        listener(net::io_context &ioc, tcp::endpoint endpoint, tsqueue<Call> &incQueue)
-                : ioc_(ioc), acceptor_(net::make_strand(ioc)), incCalls(incQueue) {
+        listener(net::io_context &ioc, tcp::endpoint endpoint, tsqueue<std::shared_ptr<Call>> &incQueue)
+                : ioc_(ioc), acceptor_(net::make_strand(ioc)), incCalls_(incQueue) {
             beast::error_code ec;
 
             // open the acceptor
@@ -82,7 +82,7 @@ namespace call_c {
                 return; // To avoid infinite loop
             } else {
                 // Create the session and run it
-                std::make_shared<session>(std::move(socket), incCalls, callId_++)
+                std::make_shared<session>(std::move(socket), incCalls_, callId_++)
                         ->run();
             }
 

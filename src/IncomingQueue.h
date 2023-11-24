@@ -22,11 +22,15 @@ namespace call_c {
     public:
         const T &front() {
             std::scoped_lock lock(muxQueue);
+            if (deqQueue.empty())
+                throw std::out_of_range("tsqueue is empty, front() is forbidden");
             return deqQueue.front();
         }
 
         const T &back() {
             std::scoped_lock lock(muxQueue);
+            if (deqQueue.empty())
+                throw std::out_of_range("tsqueue is empty, back() is forbidden");
             return deqQueue.back();
         }
 
@@ -80,14 +84,18 @@ namespace call_c {
 
         T pop_front() {
             std::scoped_lock lock(muxQueue);
-            auto t = std::move(deqQueue.front());
+            if (deqQueue.empty())
+                throw std::out_of_range("tsqueue is empty, pop_front() is forbidden");
+            T t(std::move(deqQueue.front()));
             deqQueue.pop_front();
             return t;
         }
 
         T pop_back() {
             std::scoped_lock lock(muxQueue);
-            auto t = std::move(deqQueue.back());
+            if (deqQueue.empty())
+                throw std::out_of_range("tsqueue is empty, pop_back() is forbidden");
+            T t(std::move(deqQueue.back()));
             deqQueue.pop_back();
             return t;
         }

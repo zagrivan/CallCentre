@@ -16,7 +16,7 @@ namespace call_c
         auto sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
         serverLog = std::make_shared<spdlog::logger>("SERVER", sink);
-        serverLog->set_level(spdlog::level::info);
+        serverLog->set_level(spdlog::level::err);
         serverLog->flush_on(spdlog::level::trace);
         spdlog::register_logger(serverLog);
 

@@ -28,8 +28,10 @@ namespace call_c {
 
     public:
         // Take ownership of the stream
-        session(tcp::socket &&socket, tsqueue<Call> &queue, uint32_t callID)
-                : stream_(std::move(socket)), CallID_(callID), incomingCalls(queue), call(callID) {
+        session(tcp::socket &&socket, tsqueue<std::shared_ptr<Call>> &queue, uint32_t callID)
+                : stream_(std::move(socket)), CallID_(callID), incomingCalls(queue)
+        {
+            call = std::make_shared<Call>(callID);
             C_SERVER_DEBUG("{} CALLID:{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string(), callID);
         }
 
@@ -124,11 +126,12 @@ namespace call_c {
             }
 
             // cgpn прошел валидацию, можем присвоить
-            call.CgPN = cgpn;
+            call->CgPN = cgpn;
 
             C_SERVER_INFO("CALLID:{}, CgPn:{} passed validation successfully", CallID_, cgpn);
             // push_back() to queue
             // if push_back to queue was successful, we send CallID
+            // TODO можно поменять на try catch
             if (!incomingCalls.push_back(call)) {
                 C_SERVER_WARN("CALLID:{}, CgPn:{} not added to queue, queue is overload", CallID_, cgpn);
                 return handle_queue_overload(req_.version());
@@ -143,9 +146,9 @@ namespace call_c {
         beast::flat_buffer buffer_;
         http::request<http::string_body> req_;
         uint32_t CallID_;
-        Call call;
+        std::shared_ptr<Call> call;
 
-        tsqueue<Call> &incomingCalls;
+        tsqueue<std::shared_ptr<Call>> &incomingCalls;
     };
 
 }
