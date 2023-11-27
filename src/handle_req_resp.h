@@ -49,14 +49,6 @@ namespace call_c {
         return res;
     }
 
-
-// Report a failure
-    template<typename EC>
-    void fail(EC ec, char const *what) {
-        std::cerr << what << ": " << ec.message() << "\n";
-    }
-
-
     std::string tp_to_strHMS(const std::chrono::time_point<std::chrono::system_clock> &tp) {
         std::string s{};
         s.resize(70);
@@ -65,6 +57,8 @@ namespace call_c {
         s.resize(num);
         return s;
     }
+
+
 
 }
 

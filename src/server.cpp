@@ -10,6 +10,7 @@
 #include "Log.h"
 #include "Operators_2.h"
 #include "RandGen.h"
+#include "ReadJSON.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -18,14 +19,14 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
-#define COUNT_OPERATORS 5
-#define INC_QUEUE_SIZE 5
-#define LOG_SERVER_LEVEL "info"
-#define LOG_OPERATORS_LEVEL "trace"
-// in seconds
-#define RAND_GEN_ERL_SHAPE 1
-#define RAND_GEN_ERL_SCALE 10
-#define TIME_IN_QUEUE 5
+//#define COUNT_OPERATORS 5
+//#define INC_QUEUE_SIZE 5
+//#define LOG_SERVER_LEVEL "info"
+//#define LOG_OPERATORS_LEVEL "trace"
+//// in seconds
+//#define RAND_GEN_ERL_SHAPE 1
+//#define RAND_GEN_ERL_SCALE 10
+//#define TIME_IN_QUEUE 5
 
 
 
@@ -40,6 +41,10 @@ int main(int argc, char* argv[])
                   "    http-server-async 0.0.0.0 8080 1\n";
         return EXIT_FAILURE;
     }
+
+    std::string configFileName("configCallCentre.json");
+    call_c::ReadJSON jsonConf(configFileName);
+
     auto const address = net::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
     auto const threads = std::max<int>(1, std::atoi(argv[3]));
@@ -47,10 +52,9 @@ int main(int argc, char* argv[])
     // The io_context is required for all I/O
     net::io_context ioc{};
 
-    call_c::Operators2 operators{ioc, COUNT_OPERATORS, INC_QUEUE_SIZE};
-
-    call_c::Log::Init(LOG_SERVER_LEVEL, LOG_OPERATORS_LEVEL);
-    call_c::RandGen::Init(RAND_GEN_ERL_SHAPE, RAND_GEN_ERL_SCALE, TIME_IN_QUEUE);
+    call_c::Log::Init(jsonConf.logServerLevel, jsonConf.logOperatorsLevel);
+    call_c::RandGen::Init(jsonConf.randGenErlShape, jsonConf.randGenErlScale, jsonConf.timeInQueue);
+    call_c::Operators2 operators{ioc, jsonConf.cntOperators, jsonConf.incQueueSize};
 
     // Create and launch a listening port
     std::make_shared<call_c::listener>(

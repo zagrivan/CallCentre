@@ -40,6 +40,7 @@ namespace call_c
                 freeOps_.push_back(i);
                 operators_.emplace_back(ioc);
             }
+            C_OPERATORS_INFO("Number of operators = {}, the queue size = {}", countOp, incCallsSize);
         }
 
 
@@ -115,8 +116,8 @@ namespace call_c
             auto call = incCalls_.front();
             call->dt_expiry = call->dt_req + RandGen::getExpirationTime();
             auto cancelled = timerIncCall_.expires_at(call->dt_expiry);
-            C_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled = {}, CallID:{}", tp_to_strHMS(call->dt_expiry),
-                              cancelled, call->callID);
+            C_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled:{}, CallID:{}, req time:{}", tp_to_strHMS(call->dt_expiry),
+                              cancelled, call->callID, tp_to_strHMS(call->dt_req));
 
             timerIncCall_.async_wait(
                     boost::asio::bind_executor(

@@ -13,6 +13,7 @@ namespace call_c
 
         static std::chrono::milliseconds getRandErlang()
         {
+//            return std::chrono::milliseconds(static_cast<int>(1000 * erlangDist(gen)));
             return std::chrono::milliseconds(static_cast<int>(1000 * erlangDist(gen)));
         }
 
