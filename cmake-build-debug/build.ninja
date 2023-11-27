@@ -49,8 +49,8 @@ cmake_ninja_workdir = /home/ivan/CPP/CallCentre/cmake-build-debug/
 
 build cmake_object_order_depends_target_CallCentre: phony || CMakeFiles/CallCentre.dir
 
-build CMakeFiles/CallCentre.dir/src/server.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/server.cpp || cmake_object_order_depends_target_CallCentre
-  DEP_FILE = CMakeFiles/CallCentre.dir/src/server.cpp.o.d
+build CMakeFiles/CallCentre.dir/src/main.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/main.cpp || cmake_object_order_depends_target_CallCentre
+  DEP_FILE = CMakeFiles/CallCentre.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
   OBJECT_DIR = CMakeFiles/CallCentre.dir
@@ -70,6 +70,27 @@ build CMakeFiles/CallCentre.dir/src/RandGen.cpp.o: CXX_COMPILER__CallCentre_unsc
   OBJECT_DIR = CMakeFiles/CallCentre.dir
   OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
 
+build CMakeFiles/CallCentre.dir/src/Listener.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/Listener.cpp || cmake_object_order_depends_target_CallCentre
+  DEP_FILE = CMakeFiles/CallCentre.dir/src/Listener.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/CallCentre.dir
+  OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
+
+build CMakeFiles/CallCentre.dir/src/Session.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/Session.cpp || cmake_object_order_depends_target_CallCentre
+  DEP_FILE = CMakeFiles/CallCentre.dir/src/Session.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/CallCentre.dir
+  OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
+
+build CMakeFiles/CallCentre.dir/src/Operators.cpp.o: CXX_COMPILER__CallCentre_unscanned_Debug /home/ivan/CPP/CallCentre/src/Operators.cpp || cmake_object_order_depends_target_CallCentre
+  DEP_FILE = CMakeFiles/CallCentre.dir/src/Operators.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/CallCentre.dir
+  OBJECT_FILE_DIR = CMakeFiles/CallCentre.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target CallCentre
@@ -78,7 +99,7 @@ build CMakeFiles/CallCentre.dir/src/RandGen.cpp.o: CXX_COMPILER__CallCentre_unsc
 #############################################
 # Link the executable CallCentre
 
-build CallCentre: CXX_EXECUTABLE_LINKER__CallCentre_Debug CMakeFiles/CallCentre.dir/src/server.cpp.o CMakeFiles/CallCentre.dir/src/Log.cpp.o CMakeFiles/CallCentre.dir/src/RandGen.cpp.o
+build CallCentre: CXX_EXECUTABLE_LINKER__CallCentre_Debug CMakeFiles/CallCentre.dir/src/main.cpp.o CMakeFiles/CallCentre.dir/src/Log.cpp.o CMakeFiles/CallCentre.dir/src/RandGen.cpp.o CMakeFiles/CallCentre.dir/src/Listener.cpp.o CMakeFiles/CallCentre.dir/src/Session.cpp.o CMakeFiles/CallCentre.dir/src/Operators.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/CallCentre.dir
   POST_BUILD = :

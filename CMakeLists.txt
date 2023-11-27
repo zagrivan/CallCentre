@@ -4,9 +4,12 @@ project(CallCentre)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(CallCentre
-        src/server.cpp
+        src/main.cpp
         src/Log.cpp
         src/RandGen.cpp
+        src/Listener.cpp
+        src/Session.cpp
+        src/Operators.cpp
 )
 
 add_executable(mytest test.cpp
