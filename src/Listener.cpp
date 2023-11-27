@@ -13,7 +13,7 @@ namespace call_c
         acceptor_.open(endpoint.protocol(), ec);
         if (ec)
         {
-            C_SERVER_ERROR("acceptor open: {}", ec.message());
+            LOG_SERVER_ERROR("acceptor open: {}", ec.message());
             return;
         }
 
@@ -21,7 +21,7 @@ namespace call_c
         acceptor_.set_option(net::socket_base::reuse_address(true), ec);
         if (ec)
         {
-            C_SERVER_ERROR("acceptor set_option: {}", ec.message());
+            LOG_SERVER_ERROR("acceptor set_option: {}", ec.message());
             return;
         }
 
@@ -29,7 +29,7 @@ namespace call_c
         acceptor_.bind(endpoint, ec);
         if (ec)
         {
-            C_SERVER_ERROR("acceptor bind: {}", ec.message());
+            LOG_SERVER_ERROR("acceptor bind: {}", ec.message());
             return;
         }
 
@@ -37,14 +37,14 @@ namespace call_c
         acceptor_.listen(net::socket_base::max_listen_connections, ec);
         if (ec)
         {
-            C_SERVER_ERROR("acceptor listen: {}", ec.message());
+            LOG_SERVER_ERROR("acceptor listen: {}", ec.message());
             return;
         }
     }
 
     // Start accepting incoming connections
     void Listener::run() {
-        C_SERVER_INFO("SERVER IS RUNNING");
+        LOG_SERVER_INFO("SERVER IS RUNNING");
         do_accept();
     }
 
@@ -60,9 +60,9 @@ namespace call_c
     }
 
     void Listener::on_accept(beast::error_code ec, tcp::socket socket) {
-        C_SERVER_DEBUG("on_accept: {}:{} new connection", socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port());
+        LOG_SERVER_DEBUG("on_accept: {}:{} new connection", socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port());
         if (ec) {
-            C_SERVER_ERROR("on_accept: {}", ec.message());
+            LOG_SERVER_ERROR("on_accept: {}", ec.message());
             return; // To avoid infinite loop
         } else {
             // Create the session and run it

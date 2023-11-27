@@ -8,10 +8,11 @@
 
 #include "src/includes.h"
 
-#include "src/IncomingQueue.h"
+#include "src/ThreadSafeQueue.h"
 #include "src/Call.h"
 #include "src/handle_req_resp.h"
 #include "src/RandGen.h"
+#include "src/Log.h"
 
 #include "nlohmann/json.hpp"
 
@@ -87,21 +88,18 @@ using json = nlohmann::json;
 int main()
 {
 
-    std::ifstream configFile("configCallCentre.json");
-    json data = json::parse(configFile);
+    using namespace call_c;
 
-    int count_operators = data["count_operators"];
-    int incoming_queue_size = data["incoming_queue_size"];
-    int time_in_queue = data["time_in_queue"];
-    std::string log_server_level = data["log_server_level"];
-    std::string log_operators_level = data["log_operators_level"];
-    double rand_gen_erl_shape = data["rand_gen_erl_shape"];
-    double rand_gen_erl_scale = data["rand_gen_erl_scale"];
+    Log::Init("trace", "trace");
 
-    for (const auto& val : data.items())
-    {
-        std::cout << val.key() << val.value() << '\n';
-    }
+    LOG_OPERATORS_CRITICAL("SLKADFJSLK");
+    LOG_SERVER_CRITICAL("SLKADFJSLK");
+
+    LOG_OPERATORS_INFO("sdfklj js");
+    LOG_OPERATORS_DEBUG("asdlkjfjdsg dfs g");
+
+    LOG_SERVER_INFO("sdfklj js");
+    LOG_SERVER_DEBUG("asdlkjfjdsg dfs g");
 
     return 0;
 }

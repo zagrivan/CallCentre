@@ -5,7 +5,7 @@
 #include "Session.h"
 #include "Listener.h"
 #include "Call.h"
-#include "IncomingQueue.h"
+#include "ThreadSafeQueue.h"
 #include "Log.h"
 #include "Operators.h"
 #include "RandGen.h"

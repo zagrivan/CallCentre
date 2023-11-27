@@ -15,6 +15,14 @@
 
 namespace call_c {
 
+    enum class RespStatus
+    {
+        OK,
+        OVERLOAD,
+        TIMEOUT,
+        ALREADY_IN_QUEUE
+    };
+
     struct Call {
         explicit Call(uint32_t id) : callID(id) {
             dt_req = std::chrono::system_clock::now();
@@ -27,7 +35,7 @@ namespace call_c {
         uint32_t callID{};
         std::string CgPN{}; // now I use string, but in the future, string can be replaced with integral type
         uint16_t operatorID{};
-        uint8_t status{}; // maybe enum
+        RespStatus status{}; // maybe enum
         std::chrono::time_point<std::chrono::system_clock> dt_req{};
         std::chrono::time_point<std::chrono::system_clock> dt_resp{};
         std::chrono::time_point<std::chrono::system_clock> dt_completion{};

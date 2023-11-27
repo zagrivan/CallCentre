@@ -71,7 +71,7 @@ namespace call_c
 
         void run()
         {
-            C_OPERATORS_INFO("OPERATORS ARE RUNNING");
+            LOG_OPERATORS_INFO("OPERATORS ARE RUNNING");
             while (1)
             {
                 update();
@@ -90,26 +90,26 @@ namespace call_c
             // ждем, пока появятся звонки в очереди
             incCalls_.wait();
 
-            C_OPERATORS_DEBUG("INCQUEUE.wait() is awake, there are calls, in queue {} calls", incCalls_.count());
+            LOG_OPERATORS_DEBUG("INCQUEUE.wait() is awake, there are calls, in queue {} calls", incCalls_.count());
 
             if (cntFree_)  // можно обращаться к atomic bool, спрашивать есть ли свободные операторы, а в strand обращаться к freeOps_
             {
-                C_OPERATORS_TRACE("there are {} free operators", cntFree_);
+                LOG_OPERATORS_TRACE("there are {} free operators", cntFree_);
                 --cntFree_;
                 auto call = incCalls_.pop_front();
                 net::dispatch(strand_, boost::bind(&OperatorsAlter::add_call, this, call));
             } else
             {
-                C_OPERATORS_TRACE("there are no free operators, cntFree_ = {}", cntFree_);
+                LOG_OPERATORS_TRACE("there are no free operators, cntFree_ = {}", cntFree_);
                 set_call_timer();
                 // можно попробовать ждать здесь, пока не удалится крайний звонок в очереди
-                C_OPERATORS_DEBUG("waiting for a free operator, in queue {} calls, cntFree_ = {}", incCalls_.count(),
-                                  cntFree_);
+                LOG_OPERATORS_DEBUG("waiting for a free operator, in queue {} calls, cntFree_ = {}", incCalls_.count(),
+                                    cntFree_);
                 wait_free_op();
                 // отменяем таймер и все асинх операции связанные с ним
                 auto cancelled = timerIncCall_.cancel();
-                C_OPERATORS_DEBUG("there is a {} free operator, {} async operations cancelled, timerIncCall_.cancel()",
-                                  cntFree_, cancelled);
+                LOG_OPERATORS_DEBUG("there is a {} free operator, {} async operations cancelled, timerIncCall_.cancel()",
+                                    cntFree_, cancelled);
             }
         }
 
@@ -122,13 +122,13 @@ namespace call_c
             operators_[OpID] = call;
             nearestCallsEnd_.emplace(call->dt_completion, OpID);
 
-            C_OPERATORS_INFO("CallID:{} was given to the OpID:{}, end of the call at {}",
-                             call->callID, OpID, tp_to_strHMS(call->dt_completion));
+            LOG_OPERATORS_INFO("CallID:{} was given to the OpID:{}, end of the call at {}",
+                               call->callID, OpID, tp_to_strHMS(call->dt_completion));
 
             // если таймер сработает позже, чем конец нового звонка, или не запущен, то ставим таймер
             if (!isTimerOperatorWorking_ || timerOperator_.expiry() > call->dt_completion)
             {
-                C_OPERATORS_DEBUG("timerOperator is {} working", (isTimerOperatorWorking_ ? "already" : "not"));
+                LOG_OPERATORS_DEBUG("timerOperator is {} working", (isTimerOperatorWorking_ ? "already" : "not"));
                 isTimerOperatorWorking_ = true;
                 timerOperator_.expires_at(nearestCallsEnd_.top().first);
                 timerOperator_.async_wait(
@@ -136,7 +136,7 @@ namespace call_c
                                 strand_,
                                 boost::bind(&OperatorsAlter::on_end_call, this, net::placeholders::error,
                                             nearestCallsEnd_.top().second)));
-                C_OPERATORS_DEBUG("timerOperator expires at {}", tp_to_strHMS(timerOperator_.expiry()));
+                LOG_OPERATORS_DEBUG("timerOperator expires at {}", tp_to_strHMS(timerOperator_.expiry()));
             }
         }
 
@@ -147,8 +147,8 @@ namespace call_c
             auto call = incCalls_.front();
             call->dt_expiry = call->dt_req + Rmin_;
             auto cancelled = timerIncCall_.expires_at(call->dt_expiry);
-            C_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled = {}, CallID:{}", tp_to_strHMS(call->dt_expiry),
-                              cancelled, call->callID);
+            LOG_OPERATORS_TRACE("timerIncCall_.expires_at({}), cancelled = {}, CallID:{}", tp_to_strHMS(call->dt_expiry),
+                                cancelled, call->callID);
 
             timerIncCall_.async_wait(
                     boost::asio::bind_executor(
@@ -160,11 +160,11 @@ namespace call_c
         {
             if (ec == net::error::operation_aborted)
             {
-                C_OPERATORS_DEBUG("on_end_call: timerOperator expiry is changed, OpID:{}", expectedOpID);
+                LOG_OPERATORS_DEBUG("on_end_call: timerOperator expiry is changed, OpID:{}", expectedOpID);
                 return;
             } else if (ec)
             {
-                C_OPERATORS_ERROR("on_end_call: {}", ec.message());
+                LOG_OPERATORS_ERROR("on_end_call: {}", ec.message());
                 return;
             }
 
@@ -177,7 +177,7 @@ namespace call_c
 //            operators_[OpID] = nullptr;
             auto call = std::move(operators_[OpID]);
 
-            C_OPERATORS_INFO("Call completed, CallID:{}, OpID:{}", call->callID, OpID);
+            LOG_OPERATORS_INFO("Call completed, CallID:{}, OpID:{}", call->callID, OpID);
 
             release_operator(OpID); // TODO где то здесь ошибка
 
@@ -190,11 +190,11 @@ namespace call_c
                                 strand_,
                                 boost::bind(&OperatorsAlter::on_end_call, this, net::placeholders::error,
                                             nearestCallsEnd_.top().second)));
-                C_OPERATORS_DEBUG("timerOperator expires at {}, from on_end_call()", tp_to_strHMS(timerOperator_.expiry()));
+                LOG_OPERATORS_DEBUG("timerOperator expires at {}, from on_end_call()", tp_to_strHMS(timerOperator_.expiry()));
             } else
             {
                 isTimerOperatorWorking_ = false; // timer is not working
-                C_OPERATORS_DEBUG("timerOperator is not working, from on_end_call()");
+                LOG_OPERATORS_DEBUG("timerOperator is not working, from on_end_call()");
             }
 
             // поместить оператора в свободных, залогировать вызов
@@ -206,29 +206,29 @@ namespace call_c
             // время call->dt_expiry уже прошло
             if (ec == net::error::operation_aborted)
             {
-                C_OPERATORS_DEBUG(
+                LOG_OPERATORS_DEBUG(
                         "on_queue_expiry: async operation is cancelled. The call was picked up by a free operator");
             } else if (ec)
             {
-                C_OPERATORS_WARN("on_queue_expiry: {}", ec.message());
+                LOG_OPERATORS_WARN("on_queue_expiry: {}", ec.message());
             } else
             {
                 try
                 {
                     if (incCalls_.front()->callID != expectedCallID)
                     {
-                        C_OPERATORS_DEBUG("on_queue_expiry: expectedCallID:{} != CallID", expectedCallID);
+                        LOG_OPERATORS_DEBUG("on_queue_expiry: expectedCallID:{} != CallID", expectedCallID);
                         return;
                     }
                     auto call = incCalls_.pop_front();
 
                     assert(call->callID == expectedCallID && "the incorrect call was removed from the queue");
-                    C_OPERATORS_INFO("CallID:{} removed from the queue due to expiration date",
-                                      call->callID);
+                    LOG_OPERATORS_INFO("CallID:{} removed from the queue due to expiration date",
+                                       call->callID);
                 }
                 catch (std::exception &e)
                 {
-                    C_OPERATORS_WARN("on_queue_expiry: {}", e.what());
+                    LOG_OPERATORS_WARN("on_queue_expiry: {}", e.what());
                     return;
                 }
 

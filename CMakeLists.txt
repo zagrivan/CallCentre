@@ -13,7 +13,9 @@ add_executable(CallCentre
 )
 
 add_executable(mytest test.cpp
-        src/RandGen.cpp)
+        src/RandGen.cpp
+        src/Log.cpp
+)
 
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS} libs/include)

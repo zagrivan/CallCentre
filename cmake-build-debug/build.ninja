@@ -130,6 +130,13 @@ build CMakeFiles/mytest.dir/src/RandGen.cpp.o: CXX_COMPILER__mytest_unscanned_De
   OBJECT_DIR = CMakeFiles/mytest.dir
   OBJECT_FILE_DIR = CMakeFiles/mytest.dir/src
 
+build CMakeFiles/mytest.dir/src/Log.cpp.o: CXX_COMPILER__mytest_unscanned_Debug /home/ivan/CPP/CallCentre/src/Log.cpp || cmake_object_order_depends_target_mytest
+  DEP_FILE = CMakeFiles/mytest.dir/src/Log.cpp.o.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  INCLUDES = -I/include -I/home/ivan/CPP/CallCentre/libs/include
+  OBJECT_DIR = CMakeFiles/mytest.dir
+  OBJECT_FILE_DIR = CMakeFiles/mytest.dir/src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target mytest
@@ -138,7 +145,7 @@ build CMakeFiles/mytest.dir/src/RandGen.cpp.o: CXX_COMPILER__mytest_unscanned_De
 #############################################
 # Link the executable mytest
 
-build mytest: CXX_EXECUTABLE_LINKER__mytest_Debug CMakeFiles/mytest.dir/test.cpp.o CMakeFiles/mytest.dir/src/RandGen.cpp.o
+build mytest: CXX_EXECUTABLE_LINKER__mytest_Debug CMakeFiles/mytest.dir/test.cpp.o CMakeFiles/mytest.dir/src/RandGen.cpp.o CMakeFiles/mytest.dir/src/Log.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/mytest.dir
   POST_BUILD = :

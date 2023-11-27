@@ -3,7 +3,6 @@
 
 #include "includes.h"
 
-
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
@@ -58,8 +57,15 @@ namespace call_c {
         return s;
     }
 
-
-
+    inline std::string tp_to_strYMD(const std::chrono::time_point<std::chrono::system_clock> &tp)
+    {
+        std::string s{};
+        s.resize(70);
+        std::time_t tp_c = std::chrono::system_clock::to_time_t(tp);
+        auto num = std::strftime(s.data(), s.size(), "%F", std::localtime(&tp_c));
+        s.resize(num);
+        return s;
+    }
 }
 
 #endif //CALLCENTRE_HANDLE_REQ_RESP_H

@@ -8,10 +8,8 @@
 
 
 #include "includes.h"
-#include "handle_req_resp.h"
 #include "Call.h"
-#include "IncomingQueue.h"
-#include "Log.h"
+#include "ThreadSafeQueue.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>

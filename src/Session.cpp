@@ -1,5 +1,6 @@
 #include "Session.h"
-
+#include "Log.h"
+#include "handle_req_resp.h"
 
 namespace call_c
 {
@@ -7,8 +8,8 @@ namespace call_c
             : stream_(std::move(socket)), CallID_(callID), incomingCalls(queue)
     {
         call = std::make_shared<Call>(callID);
-        C_SERVER_DEBUG("{} CALLID:{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string(),
-                       callID);
+        LOG_SERVER_DEBUG("{} CALLID:{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string(),
+                         callID);
     }
 
     void Session::run() {
@@ -42,10 +43,10 @@ namespace call_c
             return do_close();
 
         if (ec) {
-            C_SERVER_ERROR("READ FROM SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
+            LOG_SERVER_ERROR("READ FROM SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
             return;
         }
-        C_SERVER_DEBUG("reading from socket was successful, CALLID:{}", CallID_);
+        LOG_SERVER_DEBUG("reading from socket was successful, CALLID:{}", CallID_);
         // Send the response
         send_response(handle_request());
     }
@@ -62,10 +63,10 @@ namespace call_c
     void Session::on_write(beast::error_code ec, std::size_t bytes_transferred) {
         boost::ignore_unused(bytes_transferred);
         if (ec) {
-            C_SERVER_ERROR("WRITE TO SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
+            LOG_SERVER_ERROR("WRITE TO SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
             return;
         }
-        C_SERVER_DEBUG("writing to socket was successful, CALLID:{}", CallID_);
+        LOG_SERVER_DEBUG("writing to socket was successful, CALLID:{}", CallID_);
         do_close();
     }
 
@@ -76,11 +77,11 @@ namespace call_c
 
         if (ec)
         {
-            C_SERVER_ERROR("SOCKET SHUTDOWN ERROR {}, CALLID:{}", ec.message(), CallID_);
+            LOG_SERVER_ERROR("SOCKET SHUTDOWN ERROR {}, CALLID:{}", ec.message(), CallID_);
             return;
         }
 
-        C_SERVER_DEBUG("{}, CALLID:{} connection closed successfully", stream_.socket().remote_endpoint().address().to_string(), CallID_);
+        LOG_SERVER_DEBUG("{}, CALLID:{} connection closed successfully", stream_.socket().remote_endpoint().address().to_string(), CallID_);
     }
 
     http::message_generator Session::handle_request() {
@@ -98,16 +99,18 @@ namespace call_c
         // cgpn прошел валидацию, можем присвоить
         call->CgPN = cgpn;
 
-        C_SERVER_INFO("CALLID:{}, CgPn:{} passed validation successfully", CallID_, cgpn);
+        LOG_SERVER_INFO("CALLID:{}, CgPn:{} passed validation successfully", CallID_, cgpn);
         // push_back() to queue
         // if push_back to queue was successful, we send CallID
-        // TODO можно поменять на try catch
         if (!incomingCalls.push_back(call)) {
-            C_SERVER_WARN("CALLID:{}, CgPn:{} not added to queue, queue is overload", CallID_, cgpn);
+            LOG_SERVER_WARN("CALLID:{}, CgPn:{} not added to queue, queue is overload", CallID_, cgpn);
+            call->dt_completion = std::chrono::system_clock::now();
+            call->status = RespStatus::OVERLOAD;
+            Log::WriteCDR(call);
             return handle_queue_overload(req_.version());
         }
 
-        C_SERVER_DEBUG("CALLID:{}, CgPn:{} added to queue", CallID_, cgpn);
+        LOG_SERVER_DEBUG("CALLID:{}, CgPn:{} added to queue", CallID_, cgpn);
         return handle_ok(req_.version(), CallID_);
     }
 
