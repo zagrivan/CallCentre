@@ -33,11 +33,6 @@ namespace call_c
 
 }
 
-// CDR log macros
-#define C_CDR_TRACE(...) ::call_c::Log::GetCDRLogger()->trace(__VA_ARGS__)
-//TODO дописать CDR
-
-
 // server log macros
 #define LOG_SERVER_TRACE(...)         ::call_c::Log::GetServerLogger()->trace(__VA_ARGS__)
 #define LOG_SERVER_DEBUG(...)         ::call_c::Log::GetServerLogger()->debug(__VA_ARGS__)

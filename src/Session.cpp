@@ -4,15 +4,16 @@
 
 namespace call_c
 {
-    Session::Session(tcp::socket &&socket, tsqueue<std::shared_ptr<Call>> &queue, uint32_t callID)
-            : stream_(std::move(socket)), CallID_(callID), incomingCalls(queue)
+    IncomingCallsQueue* Session::incomingCalls_{nullptr};
+
+    Session::Session(tcp::socket &&socket)
+            : stream_(std::move(socket))
     {
-        call = std::make_shared<Call>(callID);
-        LOG_SERVER_DEBUG("{} CALLID:{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string(),
-                         callID);
+        LOG_SERVER_DEBUG("{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string());
     }
 
-    void Session::run() {
+    void Session::run()
+    {
         // We need to be executing within a strand to perform async operations
         // on the I/O objects in this session. Although not strictly necessary
         // for single-threaded contexts, this example code is written to be
@@ -23,7 +24,8 @@ namespace call_c
         );
     }
 
-    void Session::do_read() {
+    void Session::do_read()
+    {
         // Make the request empty before reading,
         // otherwise the operation behavior is undefined.
         req_ = {};
@@ -36,22 +38,25 @@ namespace call_c
                          beast::bind_front_handler(&Session::on_read, shared_from_this()));
     }
 
-    void Session::on_read(beast::error_code ec, std::size_t bytes_transferred) {
+    void Session::on_read(beast::error_code ec, std::size_t bytes_transferred)
+    {
         boost::ignore_unused(bytes_transferred);
         // This means they closed the connection
         if (ec == http::error::end_of_stream)
             return do_close();
 
-        if (ec) {
-            LOG_SERVER_ERROR("READ FROM SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
+        if (ec)
+        {
+            LOG_SERVER_ERROR("READ FROM SOCKET ERROR", ec.message());
             return;
         }
-        LOG_SERVER_DEBUG("reading from socket was successful, CALLID:{}", CallID_);
         // Send the response
+        // здесь обрабатывается http request
         send_response(handle_request());
     }
 
-    void Session::send_response(http::message_generator &&msg) {
+    void Session::send_response(http::message_generator &&msg)
+    {
         // Write the response
         beast::async_write(
                 stream_,
@@ -60,60 +65,76 @@ namespace call_c
         );
     }
 
-    void Session::on_write(beast::error_code ec, std::size_t bytes_transferred) {
+    void Session::on_write(beast::error_code ec, std::size_t bytes_transferred)
+    {
         boost::ignore_unused(bytes_transferred);
-        if (ec) {
-            LOG_SERVER_ERROR("WRITE TO SOCKET ERROR {}, CALLID:{}", ec.message(), CallID_);
+        if (ec)
+        {
+            LOG_SERVER_ERROR("WRITE TO SOCKET ERROR {}", ec.message());
             return;
         }
-        LOG_SERVER_DEBUG("writing to socket was successful, CALLID:{}", CallID_);
         do_close();
     }
 
-    void Session::do_close() {
+    void Session::do_close()
+    {
         // send a tcp shutdown
         beast::error_code ec;
         stream_.socket().shutdown(tcp::socket::shutdown_both, ec);
 
         if (ec)
         {
-            LOG_SERVER_ERROR("SOCKET SHUTDOWN ERROR {}, CALLID:{}", ec.message(), CallID_);
+            LOG_SERVER_ERROR("SOCKET SHUTDOWN ERROR {}", ec.message());
             return;
         }
 
-        LOG_SERVER_DEBUG("{}, CALLID:{} connection closed successfully", stream_.socket().remote_endpoint().address().to_string(), CallID_);
+        LOG_SERVER_DEBUG("{} connection closed successfully",
+                         stream_.socket().remote_endpoint().address().to_string());
     }
 
-    http::message_generator Session::handle_request() {
+    http::message_generator Session::handle_request()
+    {
         if (req_.method() != http::verb::get)
-            return handle_bad_req(req_.version(), "Usage GET method");
-        if (req_.target()[0] != '/' || req_.target().size() < 3)
-            return handle_bad_req(req_.version(), "Invalid URI");
-
-        auto cgpn = req_.target().substr(1);
-        for (auto c: cgpn) {
-            if (!std::isdigit(c))
-                return handle_bad_req(req_.version(), "Invalid number");
+        {
+            LOG_SERVER_INFO("Invalid request: был использован не GET request IP:{}", stream_.socket().remote_endpoint().address().to_string());
+            return handle_bad_req(req_.version(), "Usage GET method.");
+        }
+        std::string cg_pn{};
+        if (!isValidPhoneNumber(req_.target(), cg_pn))
+        {
+            LOG_SERVER_INFO("Invalid request: неправильно набран номер: {} IP:{}", req_.target(), stream_.socket().remote_endpoint().address().to_string());
+            return handle_bad_req(req_.version(), "Invalid phone number.");
         }
 
-        // cgpn прошел валидацию, можем присвоить
-        call->CgPN = cgpn;
+        auto call = std::make_shared<Call>(cg_pn);
 
-        LOG_SERVER_INFO("CALLID:{}, CgPn:{} passed validation successfully", CallID_, cgpn);
-        // push_back() to queue
-        // if push_back to queue was successful, we send CallID
-        if (!incomingCalls.push_back(call)) {
-            LOG_SERVER_WARN("CALLID:{}, CgPn:{} not added to queue, queue is overload", CallID_, cgpn);
-            call->dt_completion = std::chrono::system_clock::now();
-            call->status = RespStatus::OVERLOAD;
-            Log::WriteCDR(call);
-            return handle_queue_overload(req_.version());
-        }
-
-        LOG_SERVER_DEBUG("CALLID:{}, CgPn:{} added to queue", CallID_, cgpn);
-        return handle_ok(req_.version(), CallID_);
+        return AddToQueue(call);
     }
 
+    http::message_generator Session::AddToQueue(std::shared_ptr<Call> call)
+    {
+        // добавляем в очередь
+        Call::RespStatus status = incomingCalls_->push(call);
+        std::string message;
 
+        switch (status)
+        {
+            case Call::RespStatus::OK:
+                message.append("CallId: ").append(std::to_string(call->callID));
+                return handle_valid_req(req_.version(), message);
+            case Call::RespStatus::OVERLOAD:
+                message.append("The queue is overloaded");
+                call->status = Call::RespStatus::OVERLOAD;
+                break;
+            case Call::RespStatus::ALREADY_IN_QUEUE:
+                message.append("This phone number is already waiting");
+                call->status = Call::RespStatus::ALREADY_IN_QUEUE;
+                break;
+        }
+
+        call->dt_completion = std::chrono::system_clock::now();
+        Log::WriteCDR(call);
+        return handle_valid_req(req_.version(), message);
+    }
 
 }

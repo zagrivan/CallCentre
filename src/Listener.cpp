@@ -5,8 +5,8 @@
 
 namespace call_c
 {
-    Listener::Listener(net::io_context &ioc, tcp::endpoint endpoint, tsqueue<std::shared_ptr<Call>> &incQueue)
-            : ioc_(ioc), acceptor_(net::make_strand(ioc)), incCalls_(incQueue), callId_(100)
+    Listener::Listener(net::io_context &ioc, tcp::endpoint endpoint)
+            : ioc_(ioc), acceptor_(net::make_strand(ioc))
     {
         beast::error_code ec;
         // open the acceptor
@@ -66,7 +66,7 @@ namespace call_c
             return; // To avoid infinite loop
         } else {
             // Create the session and run it
-            std::make_shared<Session>(std::move(socket), incCalls_, callId_++)
+            std::make_shared<Session>(std::move(socket))
                     ->run();
         }
         // Accept another connection

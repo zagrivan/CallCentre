@@ -9,7 +9,8 @@
 #include "Log.h"
 #include "Operators.h"
 #include "RandGen.h"
-#include "ReadJSON.h"
+#include "ReadConfig.h"
+#include "IncomingCallsQueue.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -18,7 +19,7 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     // Check command line arguments.
     if (argc != 4)
@@ -30,8 +31,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::string configFileName("configCallCentre.json");
-    call_c::ReadJSON jsonConf(configFileName);
+    const std::string kConfigFileName = "configCallCentre.json";
+    call_c::ReadConfig jsonConf(kConfigFileName);
 
     auto const address = net::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
@@ -40,20 +41,22 @@ int main(int argc, char* argv[])
     // The io_context is required for all I/O
     net::io_context ioc{};
 
-    call_c::Log::Init(jsonConf.logServerLevel, jsonConf.logOperatorsLevel);
-    call_c::RandGen::Init(jsonConf.randGenErlShape, jsonConf.randGenErlScale, jsonConf.timeInQueue);
-    call_c::Operators operators{ioc, jsonConf.cntOperators, jsonConf.incQueueSize};
+    call_c::Log::Init(jsonConf.log_server_level, jsonConf.log_operators_level);
+    call_c::RandGen::Init(jsonConf.rand_gen_erl_shape, jsonConf.rand_gen_erl_scale, jsonConf.timeout_in_queue_min,
+                          jsonConf.timeout_in_queue_max);
 
+    call_c::Operators operators{ioc, jsonConf.count_operators, jsonConf.incoming_queue_size};
+    call_c::Session::setIncomingCallsQueue(&operators.getIncCalls());
     // Create and launch a listening port
     std::make_shared<call_c::Listener>(
             ioc,
-            tcp::endpoint{address, port},
-            operators.getIncCalls())->run();
+            tcp::endpoint{address, port}
+            )->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM);
     signals.async_wait(
-            [&](beast::error_code const&, int)
+            [&](beast::error_code const &, int)
             {
                 // Stop the `io_context`. This will cause `run()`
                 // to return immediately, eventually destroying the
@@ -61,16 +64,18 @@ int main(int argc, char* argv[])
                 ioc.stop();
             });
 
+    // запускаю операторов
     std::thread thrForOperators{
-        [&operators] {
-            operators.run();
-        }
+            [&operators]
+            {
+                operators.run();
+            }
     };
 
     // Run the I/O service on the requested number of threads
     std::vector<std::thread> v;
     v.reserve(threads - 1);
-    for(auto i = threads - 1; i > 0; --i)
+    for (auto i = threads - 1; i > 0; --i)
         v.emplace_back(
                 [&ioc]
                 {
@@ -78,7 +83,7 @@ int main(int argc, char* argv[])
                 });
     ioc.run();
 
-    for (auto& t : v)
+    for (auto &t: v)
         t.join();
 
     // TODO останавливаем операторов

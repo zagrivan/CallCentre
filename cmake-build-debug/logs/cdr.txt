@@ -105,3 +105,299 @@
 2023-11-27 20:27:53 ; 125 ; 134 ; 2023-11-27 20:28:18 ; OK ; 20:27:58 ; 2 ; 19;
 2023-11-27 20:27:48 ; 120 ; 129 ; 2023-11-27 20:28:19 ; OK ; 20:27:51 ; 1 ; 27;
 2023-11-27 20:27:52 ; 122 ; 131 ; 2023-11-27 20:28:25 ; OK ; 20:27:56 ; 4 ; 28;
+[2023-11-27 23:47:16] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+2023-11-27 23:47:36 ; 100 ; 101 ; 2023-11-27 23:47:37 ; OK ; 23:47:36 ; 0 ; 0;
+2023-11-27 23:47:38 ; 101 ; 102 ; 2023-11-27 23:47:39 ; OK ; 23:47:38 ; 1 ; 1;
+2023-11-27 23:47:39 ; 103 ; 104 ; 2023-11-27 23:47:41 ; OK ; 23:47:39 ; 3 ; 1;
+2023-11-27 23:47:40 ; 105 ; 106 ; 2023-11-27 23:47:41 ; OK ; 23:47:40 ; 0 ; 0;
+2023-11-27 23:47:46 ; 114 ; 114 ; 2023-11-27 23:47:46 ; OVERLOAD ; - ; - ; -;
+2023-11-27 23:47:42 ; 107 ; 107 ; 2023-11-27 23:47:47 ; OK ; 23:47:42 ; 3 ; 4;
+2023-11-27 23:47:47 ; 116 ; 116 ; 2023-11-27 23:47:47 ; OVERLOAD ; - ; - ; -;
+2023-11-27 23:47:48 ; 117 ; 117 ; 2023-11-27 23:47:48 ; OVERLOAD ; - ; - ; -;
+2023-11-27 23:47:42 ; 108 ; 108 ; 2023-11-27 23:47:48 ; OK ; 23:47:42 ; 0 ; 5;
+2023-11-27 23:47:45 ; 111 ; 111 ; 2023-11-27 23:47:50 ; TIMEOUT ; - ; - ; -;
+2023-11-27 23:47:45 ; 112 ; 112 ; 2023-11-27 23:47:50 ; TIMEOUT ; - ; - ; -;
+2023-11-27 23:47:43 ; 109 ; 109 ; 2023-11-27 23:47:51 ; OK ; 23:47:47 ; 3 ; 4;
+2023-11-27 23:47:41 ; 106 ; 10 ; 2023-11-27 23:47:51 ; OK ; 23:47:41 ; 1 ; 10;
+2023-11-27 23:47:46 ; 113 ; 113 ; 2023-11-27 23:47:54 ; OK ; 23:47:51 ; 3 ; 3;
+2023-11-27 23:47:39 ; 102 ; 103 ; 2023-11-27 23:47:55 ; OK ; 23:47:39 ; 2 ; 16;
+2023-11-27 23:47:47 ; 115 ; 115 ; 2023-11-27 23:47:56 ; OK ; 23:47:51 ; 1 ; 5;
+[2023-11-28 21:52:35] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-28 22:02:43] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-28 23:52:27] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:24:48] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:31:39] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:32:25] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:33:01] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:33:08] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:33:16] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:33:26] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:33:38] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:34:12] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:34:30] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:35:10] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:35:14] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:35:15] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:35:15] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:35:16] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:36:57] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:44:55] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:44:55] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:44:55] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:22] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:22] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:22] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:53] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:53] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:45:53] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:46:26] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:46:42] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:55:25] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:55:26] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 01:55:26] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 02:02:38] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 02:02:38] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 02:07:48] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 02:07:48] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-11-30 02:07:48] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:16:32] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:16:32] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:20:03] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:20:03] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:21:36] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:23:19] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+[2023-12-01 18:23:19] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2023-12-02 18:06:46.317 ; 112 ; 100 ; 2023-12-02 18:06:46.318 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:06:46.317 ; 113 ; 101 ; 2023-12-02 18:06:46.318 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:06:46.317 ; 114 ; 102 ; 2023-12-02 18:06:46.318 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:06:46.317 ; 115 ; 103 ; 2023-12-02 18:06:46.318 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:06:46.317 ; 116 ; 104 ; 2023-12-02 18:06:46.318 ; TIMEOUT ; - ; - ; -;
+ 
+2023-12-02 18:15:40.26 ; 100 ; 101 ; 2023-12-02 18:15:46.648 ; OK ; 18:15:40.26 ; 0 ; 6;
+2023-12-02 18:15:53.769 ; 101 ; 101 ; 2023-12-02 18:15:56.730 ; OK ; 18:15:53.769 ; 1 ; 2;
+2023-12-02 18:16:30.844 ; 103 ; 101 ; 2023-12-02 18:16:31.296 ; OK ; 18:16:30.844 ; 3 ; 0;
+2023-12-02 18:16:32.488 ; 106 ; 101 ; 2023-12-02 18:16:33.728 ; OK ; 18:16:32.489 ; 1 ; 1;
+2023-12-02 18:16:31.776 ; 105 ; 10 ; 2023-12-02 18:16:34.936 ; OK ; 18:16:31.776 ; 0 ; 3;
+2023-12-02 18:16:33.334 ; 107 ; 101 ; 2023-12-02 18:16:35.579 ; OK ; 18:16:33.334 ; 3 ; 2;
+2023-12-02 18:16:31.329 ; 104 ; 101 ; 2023-12-02 18:16:36.544 ; OK ; 18:16:31.329 ; 4 ; 5;
+2023-12-02 18:16:30.355 ; 102 ; 101 ; 2023-12-02 18:16:36.934 ; OK ; 18:16:30.356 ; 2 ; 6;
+2023-12-02 18:16:34.26 ; 108 ; 101 ; 2023-12-02 18:16:36.980 ; OK ; 18:16:34.26 ; 1 ; 2;
+2023-12-02 18:16:37.160 ; 112 ; 101 ; 2023-12-02 18:16:39.114 ; OK ; 18:16:37.160 ; 2 ; 1;
+2023-12-02 18:16:40.73 ; 116 ; 101 ; 2023-12-02 18:16:40.73 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:40.887 ; 117 ; 101 ; 2023-12-02 18:16:40.887 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:41.630 ; 118 ; 101 ; 2023-12-02 18:16:41.630 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:34.599 ; 109 ; 101 ; 2023-12-02 18:16:41.846 ; OK ; 18:16:34.936 ; 0 ; 6;
+2023-12-02 18:16:35.129 ; 110 ; 101 ; 2023-12-02 18:16:42.579 ; OK ; 18:16:35.579 ; 3 ; 7;
+2023-12-02 18:16:39.378 ; 115 ; 101 ; 2023-12-02 18:16:43.317 ; OK ; 18:16:41.846 ; 0 ; 1;
+2023-12-02 18:16:44.219 ; 122 ; 101 ; 2023-12-02 18:16:44.219 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:44.798 ; 123 ; 101 ; 2023-12-02 18:16:44.798 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:42.358 ; 119 ; 101 ; 2023-12-02 18:16:45.105 ; OK ; 18:16:42.579 ; 3 ; 2;
+2023-12-02 18:16:46.425 ; 125 ; 101 ; 2023-12-02 18:16:46.425 ; ALREADY_IN_QUEUE ; - ; - ; -;
+2023-12-02 18:16:38.695 ; 114 ; 101 ; 2023-12-02 18:16:47.900 ; OK ; 18:16:39.114 ; 2 ; 8;
+2023-12-02 18:16:43.575 ; 121 ; 101 ; 2023-12-02 18:16:47.958 ; OK ; 18:16:45.105 ; 3 ; 2;
+2023-12-02 18:16:35.931 ; 111 ; 101 ; 2023-12-02 18:16:50.18 ; OK ; 18:16:36.544 ; 4 ; 13;
+2023-12-02 18:16:51.174 ; 133 ; 109 ; 2023-12-02 18:16:51.174 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:37.869 ; 113 ; 101 ; 2023-12-02 18:16:52.499 ; OK ; 18:16:37.869 ; 1 ; 14;
+2023-12-02 18:16:54.963 ; 135 ; 111 ; 2023-12-02 18:16:54.963 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:55.477 ; 136 ; 112 ; 2023-12-02 18:16:55.477 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:55.958 ; 137 ; 113 ; 2023-12-02 18:16:55.959 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:49.92 ; 129 ; 105 ; 2023-12-02 18:16:56.439 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:50.710 ; 132 ; 108 ; 2023-12-02 18:16:56.514 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:49.732 ; 130 ; 106 ; 2023-12-02 18:16:56.863 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:58.82 ; 141 ; 117 ; 2023-12-02 18:16:58.82 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:50.254 ; 131 ; 107 ; 2023-12-02 18:16:58.532 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:59.85 ; 143 ; 119 ; 2023-12-02 18:16:59.85 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:47.640 ; 127 ; 103 ; 2023-12-02 18:16:59.914 ; OK ; 18:16:50.19 ; 4 ; 9;
+2023-12-02 18:17:01.559 ; 145 ; 121 ; 2023-12-02 18:17:01.559 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:17:02.44 ; 146 ; 122 ; 2023-12-02 18:17:02.44 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:57.21 ; 139 ; 115 ; 2023-12-02 18:17:02.146 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:47.126 ; 126 ; 102 ; 2023-12-02 18:17:02.714 ; OK ; 18:16:47.959 ; 3 ; 14;
+2023-12-02 18:16:57.527 ; 140 ; 116 ; 2023-12-02 18:17:03.266 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:17:04.0 ; 150 ; 126 ; 2023-12-02 18:17:04.0 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:17:04.565 ; 151 ; 127 ; 2023-12-02 18:17:04.565 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:16:45.371 ; 124 ; 101 ; 2023-12-02 18:17:04.641 ; OK ; 18:16:47.900 ; 2 ; 16;
+2023-12-02 18:17:05.564 ; 153 ; 129 ; 2023-12-02 18:17:05.564 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:17:02.489 ; 147 ; 123 ; 2023-12-02 18:17:08.424 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:58.627 ; 142 ; 118 ; 2023-12-02 18:17:09.232 ; OK ; 18:17:04.642 ; 2 ; 4;
+2023-12-02 18:17:03.494 ; 149 ; 125 ; 2023-12-02 18:17:10.265 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:16:48.177 ; 128 ; 104 ; 2023-12-02 18:17:10.939 ; OK ; 18:16:52.499 ; 1 ; 18;
+2023-12-02 18:16:54.14 ; 134 ; 110 ; 2023-12-02 18:17:11.252 ; OK ; 18:16:59.914 ; 4 ; 11;
+2023-12-02 18:16:56.486 ; 138 ; 114 ; 2023-12-02 18:17:16.821 ; OK ; 18:17:02.714 ; 3 ; 14;
+2023-12-02 18:16:42.952 ; 120 ; 101 ; 2023-12-02 18:17:20.770 ; OK ; 18:16:43.317 ; 0 ; 37;
+2023-12-02 18:17:00.812 ; 144 ; 120 ; 2023-12-02 18:17:20.946 ; OK ; 18:17:09.232 ; 2 ; 11;
+2023-12-02 18:17:03.7 ; 148 ; 124 ; 2023-12-02 18:17:25.581 ; OK ; 18:17:10.940 ; 1 ; 14;
+2023-12-02 18:17:05.87 ; 152 ; 128 ; 2023-12-02 18:17:37.404 ; OK ; 18:17:11.253 ; 4 ; 26;
+ 
+2023-12-02 18:20:08.666 ; 103 ; 104 ; 2023-12-02 18:20:10.533 ; OK ; 18:20:08.666 ; 3 ; 1;
+2023-12-02 18:20:09.707 ; 105 ; 106 ; 2023-12-02 18:20:11.761 ; OK ; 18:20:10.533 ; 3 ; 1;
+2023-12-02 18:20:15.132 ; 112 ; 113 ; 2023-12-02 18:20:15.132 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:15.722 ; 113 ; 114 ; 2023-12-02 18:20:15.722 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:16.287 ; 114 ; 115 ; 2023-12-02 18:20:16.287 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:16.834 ; 115 ; 116 ; 2023-12-02 18:20:16.834 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:17.365 ; 116 ; 117 ; 2023-12-02 18:20:17.365 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:18.56 ; 117 ; 118 ; 2023-12-02 18:20:18.56 ; OVERLOAD ; - ; - ; -;
+2023-12-02 18:20:14.77 ; 110 ; 111 ; 2023-12-02 18:20:19.501 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:20:13.417 ; 109 ; 110 ; 2023-12-02 18:20:19.891 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:20:11.531 ; 108 ; 109 ; 2023-12-02 18:20:20.497 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:20:10.769 ; 107 ; 108 ; 2023-12-02 18:20:20.759 ; TIMEOUT ; - ; - ; -;
+2023-12-02 18:20:09.143 ; 104 ; 105 ; 2023-12-02 18:20:21.22 ; OK ; 18:20:09.143 ; 4 ; 11;
+2023-12-02 18:20:06.919 ; 100 ; 101 ; 2023-12-02 18:20:24.148 ; OK ; 18:20:06.919 ; 0 ; 17;
+2023-12-02 18:20:08.104 ; 102 ; 103 ; 2023-12-02 18:20:24.609 ; OK ; 18:20:08.104 ; 2 ; 16;
+2023-12-02 18:20:10.243 ; 106 ; 107 ; 2023-12-02 18:20:31.294 ; OK ; 18:20:11.761 ; 3 ; 19;
+2023-12-02 18:20:14.571 ; 111 ; 112 ; 2023-12-02 18:20:35.421 ; OK ; 18:20:21.22 ; 4 ; 14;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2023-12-03 17:06:28.140 ; 112 ; 100 ; 2023-12-03 17:06:28.141 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:28.140 ; 113 ; 101 ; 2023-12-03 17:06:28.141 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:28.140 ; 114 ; 102 ; 2023-12-03 17:06:28.141 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:28.140 ; 115 ; 103 ; 2023-12-03 17:06:28.141 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:28.140 ; 116 ; 104 ; 2023-12-03 17:06:28.141 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+2023-12-03 17:06:49.9 ; 112 ; 100 ; 2023-12-03 17:06:49.10 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:49.9 ; 113 ; 101 ; 2023-12-03 17:06:49.10 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:49.9 ; 114 ; 102 ; 2023-12-03 17:06:49.10 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:49.9 ; 115 ; 103 ; 2023-12-03 17:06:49.10 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:06:49.9 ; 116 ; 104 ; 2023-12-03 17:06:49.10 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+2023-12-03 17:09:38.904 ; 112 ; 100 ; 2023-12-03 17:09:38.905 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:09:38.904 ; 113 ; 101 ; 2023-12-03 17:09:38.906 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:09:38.904 ; 114 ; 102 ; 2023-12-03 17:09:38.906 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:09:38.904 ; 115 ; 103 ; 2023-12-03 17:09:38.906 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:09:38.904 ; 116 ; 104 ; 2023-12-03 17:09:38.906 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+ 
+ 
+ 
+2023-12-03 17:46:12.978 ; 112 ; 100 ; 2023-12-03 17:46:12.979 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:46:12.978 ; 113 ; 101 ; 2023-12-03 17:46:12.979 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:46:12.978 ; 114 ; 102 ; 2023-12-03 17:46:12.979 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:46:12.978 ; 115 ; 103 ; 2023-12-03 17:46:12.979 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:46:12.978 ; 116 ; 104 ; 2023-12-03 17:46:12.979 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2023-12-03 17:47:17.477 ; 112 ; 100 ; 2023-12-03 17:47:17.478 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:47:17.477 ; 113 ; 101 ; 2023-12-03 17:47:17.478 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:47:17.477 ; 114 ; 102 ; 2023-12-03 17:47:17.478 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:47:17.477 ; 115 ; 103 ; 2023-12-03 17:47:17.478 ; TIMEOUT ; - ; - ; -;
+2023-12-03 17:47:17.477 ; 116 ; 104 ; 2023-12-03 17:47:17.478 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+ 
+ 
+ 
+2023-12-03 18:00:24.284 ; 112 ; 100 ; 2023-12-03 18:00:24.285 ; TIMEOUT ; - ; - ; -;
+2023-12-03 18:00:24.284 ; 113 ; 101 ; 2023-12-03 18:00:24.285 ; TIMEOUT ; - ; - ; -;
+2023-12-03 18:00:24.284 ; 114 ; 102 ; 2023-12-03 18:00:24.285 ; TIMEOUT ; - ; - ; -;
+2023-12-03 18:00:24.284 ; 115 ; 103 ; 2023-12-03 18:00:24.285 ; TIMEOUT ; - ; - ; -;
+2023-12-03 18:00:24.284 ; 116 ; 104 ; 2023-12-03 18:00:24.285 ; TIMEOUT ; - ; - ; -;
+ 
+ 
+ 
+ 
+ 

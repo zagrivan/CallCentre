@@ -13,7 +13,8 @@ namespace call_c
                     {"debug", spdlog::level::debug},
                     {"info",  spdlog::level::info},
                     {"warn",  spdlog::level::warn},
-                    {"err",   spdlog::level::err}
+                    {"err",   spdlog::level::err},
+                    {"off", spdlog::level::off}
             };
 
     void Log::Init(const std::string &levelServer, const std::string &levelOperator)
@@ -23,9 +24,7 @@ namespace call_c
         cdrLog->set_level(spdlog::level::info);
         cdrLog->flush_on(spdlog::level::info);
 
-        cdrLog->info(
-                "[{}] START OF RECORDING: DT_req; CallID; CgPn; DT_completion; status; DT_operator_resp; Operator_ID; call_duration_secunds;",
-                tp_to_strYMD(std::chrono::system_clock::now()) + " " + tp_to_strHMS(std::chrono::system_clock::now()));
+        cdrLog->info(" ");
 
         auto sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         // [2014-10-31 23:46:59.678] [my_loggername] [info] Some message
@@ -51,28 +50,26 @@ namespace call_c
         std::string OpID = "-";
         std::string call_duration = "-";
         std::string status;
-
         switch (call->status)
         {
-            case RespStatus::OK:
+            case Call::RespStatus::OK:
                 dt_operator_resp = tp_to_strHMS(call->dt_resp);
                 OpID = std::to_string(call->operatorID);
-                call_duration = std::to_string(
-                        duration_cast<std::chrono::seconds>(call->dt_completion - call->dt_resp).count());
+                call_duration = std::to_string(duration_cast<std::chrono::seconds>(call->call_duration).count());
                 status = "OK";
                 break;
-            case RespStatus::OVERLOAD:
+            case Call::RespStatus::OVERLOAD:
                 status = "OVERLOAD";
                 break;
-            case RespStatus::TIMEOUT:
+            case Call::RespStatus::TIMEOUT:
                 status = "TIMEOUT";
                 break;
-            case RespStatus::ALREADY_IN_QUEUE:
+            case Call::RespStatus::ALREADY_IN_QUEUE:
                 status = "ALREADY_IN_QUEUE";
                 break;
         }
 
-        cdrLog->info("{} ; {} ; {} ; {} ; {} ; {} ; {} ; {};", dt_req, call->callID, call->CgPN, dt_completion, status,
+        cdrLog->info("{} ; {} ; {} ; {} ; {} ; {} ; {} ; {};", dt_req, call->callID, call->CgPn, dt_completion, status,
                      dt_operator_resp, OpID, call_duration);
     }
 

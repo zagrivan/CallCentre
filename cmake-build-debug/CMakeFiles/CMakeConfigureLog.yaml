@@ -515,3 +515,35 @@ events:
       
       
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/snap/clion/250/bin/cmake/linux/x64/share/cmake-3.26/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/snap/clion/250/bin/cmake/linux/x64/share/cmake-3.26/Modules/CheckCSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "/snap/clion/250/bin/cmake/linux/x64/share/cmake-3.26/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "/snap/clion/250/bin/cmake/linux/x64/share/cmake-3.26/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "cmake-build-debug/_deps/googletest-src/googletest/cmake/internal_utils.cmake:66 (find_package)"
+      - "cmake-build-debug/_deps/googletest-src/googletest/CMakeLists.txt:83 (config_compiler_and_linker)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LQOXTA"
+      binary: "/home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LQOXTA"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: /home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LQOXTA
+        
+        Run Build Command(s):/snap/clion/250/bin/ninja/linux/x64/ninja -v cmTC_65e5b && [1/2] /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD  -fdiagnostics-color=always -o CMakeFiles/cmTC_65e5b.dir/src.c.o -c /home/ivan/CPP/CallCentre/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-LQOXTA/src.c
+        [2/2] : && /usr/bin/cc   CMakeFiles/cmTC_65e5b.dir/src.c.o -o cmTC_65e5b   && :
+        
+      exitCode: 0
+...

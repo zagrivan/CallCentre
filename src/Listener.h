@@ -2,13 +2,10 @@
 #define CALLCENTRE_LISTENER_H
 
 
-/* TODO
-придумать что то с callid генератором
-*/
-
-
 #include "includes.h"
 #include "ThreadSafeQueue.h"
+#include "Call.h"
+#include "IncomingCallsQueue.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -16,13 +13,16 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
-namespace call_c {
+namespace call_c
+{
 
 // Accepts incoming connections and launches the sessions
-    class Listener : public std::enable_shared_from_this<Listener> {
+    class Listener : public std::enable_shared_from_this<Listener>
+    {
 
     public:
-        Listener(net::io_context &ioc, tcp::endpoint endpoint, tsqueue<std::shared_ptr<Call>> &incQueue);
+        Listener(net::io_context &ioc, tcp::endpoint endpoint);
+
         // Start accepting incoming connections
         void run();
 
@@ -34,10 +34,6 @@ namespace call_c {
     private:
         net::io_context &ioc_;
         tcp::acceptor acceptor_;
-        uint32_t callId_;
-
-        tsqueue<std::shared_ptr<Call>> &incCalls_;
-
     };
 
 }

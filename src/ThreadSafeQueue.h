@@ -6,7 +6,6 @@
 #include <deque>
 #include <condition_variable>
 
-#include "Log.h"
 
 namespace call_c {
 
