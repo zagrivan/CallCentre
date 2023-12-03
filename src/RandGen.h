@@ -25,7 +25,7 @@ namespace call_c
         static double uniform_dist_max() { return uniform_dist_.b();}
 
     private:
-        static std::mt19937 gen_;
+        static thread_local std::mt19937 gen_;
 
         static std::gamma_distribution<> erlang_dist_;
 

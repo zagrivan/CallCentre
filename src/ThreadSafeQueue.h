@@ -12,9 +12,7 @@ namespace call_c {
     template<typename T>
     class tsqueue {
     public:
-        explicit tsqueue(size_t n) : capacity(n) {
-
-        };
+        tsqueue() = default;
 
         tsqueue(const tsqueue<T> &) = delete; // non copied
 
@@ -33,42 +31,25 @@ namespace call_c {
             return deqQueue.back();
         }
 
-        bool push_back(const T &item) {
+        void push_back(const T &item) {
             std::scoped_lock lock(muxQueue);
-
-            if (deqQueue.size() >= capacity)
-                return false;
-
             deqQueue.emplace_back(std::move(item));
 
             std::unique_lock<std::mutex> ul(muxBlocking); // wake up wait function
             cvBlocking.notify_one();
-
-            return true;
         }
 
-        bool push_front(const T &item) {
+        void push_front(const T &item) {
             std::scoped_lock lock(muxQueue);
-
-            if (deqQueue.size() >= capacity)
-                return false;
-
             deqQueue.emplace_front(std::move(item));
 
             std::unique_lock<std::mutex> ul(muxBlocking);
             cvBlocking.notify_one();
-
-            return true;
         }
 
         bool empty() {
             std::scoped_lock lock(muxQueue);
             return deqQueue.empty();
-        }
-
-        bool overload() {
-            std::scoped_lock lock{muxQueue};
-            return deqQueue.size() == capacity;
         }
 
         size_t count() {
@@ -107,10 +88,7 @@ namespace call_c {
             }
         }
 
-
     protected:
-        size_t capacity;
-
         std::mutex muxQueue;
         std::deque<T> deqQueue;
 

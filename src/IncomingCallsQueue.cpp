@@ -34,13 +34,13 @@ namespace call_c
         // проверка на дублирование
         if (map_cg_pn_to_pos_.find(call->CgPn) != map_cg_pn_to_pos_.end())
         {
-            LOG_OPERATORS_INFO("CallId:{}, CgPn:{} ALREADY_IN_QUEUE", call->callID, call->CgPn);
+            LOG_OPERATORS_INFO("CallID:{} CgPn:{} ALREADY_IN_QUEUE", call->callID, call->CgPn);
             return Call::RespStatus::ALREADY_IN_QUEUE;
         }
 
         if (incoming_calls_.size() >= capacity_)
         {
-            LOG_OPERATORS_INFO("CallId:{}, CgPn:{} QUEUE_OVERLOAD", call->callID, call->CgPn);
+            LOG_OPERATORS_INFO("CallID:{} CgPn:{} QUEUE_OVERLOAD", call->callID, call->CgPn);
             return Call::RespStatus::OVERLOAD;
         }
         // индекс свободного таймера
@@ -57,7 +57,7 @@ namespace call_c
                 boost::bind(&IncomingCallsQueue::OnCallReset,
                             this, net::placeholders::error, call->CgPn, --incoming_calls_.end()));
 
-        LOG_OPERATORS_DEBUG("CallId:{}, timer_index:{} IncomingCallsQueue::push", call->callID, timer_index);
+        LOG_OPERATORS_DEBUG("CallID:{} timer_index:{} IncomingCallsQueue::push", call->callID, timer_index);
 
         std::unique_lock<std::mutex> ul(mux_blocking); // wake up wait function
         cv_blocking.notify_one();
@@ -105,6 +105,14 @@ namespace call_c
             std::unique_lock<std::mutex> ul(mux_blocking);
             cv_blocking.wait(ul);
         }
+    }
+
+    void IncomingCallsQueue::awake()
+    {
+        std::scoped_lock lock(mux_queue);
+        incoming_calls_.emplace_back(nullptr);
+        std::unique_lock<std::mutex> ul(mux_blocking); // wake up wait function
+        cv_blocking.notify_one();
     }
 
     void IncomingCallsQueue::OnCallReset(const boost::system::error_code &ec, std::string cg_pn, ListIterator iter)

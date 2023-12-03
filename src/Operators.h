@@ -26,12 +26,9 @@ namespace call_c
 
         void run();
 
-        void stop() {}
+        void stop();
 
     private:
-
-        void update();
-
         void add_call();
 
         void on_end_call(const boost::system::error_code &ec, std::shared_ptr<Call> call);
@@ -39,13 +36,14 @@ namespace call_c
     private:
 
         net::io_context &ioc_;
-        net::strand<net::io_context::executor_type> strand_;
 
         IncomingCallsQueue incCalls_;
 
         std::vector<net::system_timer> operators_;
 
         tsqueue<int> freeOps_;
+
+        std::atomic_bool continue_loop_ = true;
     };
 }
 

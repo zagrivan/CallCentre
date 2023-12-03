@@ -5,6 +5,7 @@
 #include <chrono>
 #include <utility>
 #include <string>
+#include <atomic>
 
 #include "RandGen.h"
 
@@ -44,7 +45,7 @@ namespace call_c
         }
 
     private:
-        static uint32_t next_call_id;
+        static std::atomic<uint32_t> next_call_id;
     };
 
 

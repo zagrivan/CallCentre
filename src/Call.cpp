@@ -2,8 +2,8 @@
 
 namespace call_c
 {
-    uint32_t Call::next_call_id = 100;
-    // TODO: не thread safe с RandGen, погуглить, возможно вызов генератора безопасен
+    std::atomic<uint32_t> Call::next_call_id = 100;
+
     Call::Call(std::string phone_number) : callID(getNextCallId()), CgPn(std::move(phone_number)),
                                            dt_req(std::chrono::system_clock::now()),
                                            call_duration(RandGen::getRandErlang()),

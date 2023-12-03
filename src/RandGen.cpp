@@ -2,7 +2,7 @@
 
 namespace call_c
 {
-    std::mt19937 RandGen::gen_ = std::mt19937(std::random_device{}());
+    thread_local std::mt19937 RandGen::gen_ = std::mt19937(std::random_device{}());
     std::gamma_distribution<> RandGen::erlang_dist_;
     std::uniform_real_distribution<double> RandGen::uniform_dist_;
 

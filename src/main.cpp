@@ -60,12 +60,12 @@ int main(int argc, char *argv[])
             {
                 // Stop the `io_context`. This will cause `run()`
                 // to return immediately, eventually destroying the
-                // `io_context` and all of the sockets in it.
+                // `io_context` and all the sockets in it.
                 ioc.stop();
             });
 
     // запускаю операторов
-    std::thread thrForOperators{
+    std::thread thr_for_operators{
             [&operators]
             {
                 operators.run();
@@ -73,22 +73,21 @@ int main(int argc, char *argv[])
     };
 
     // Run the I/O service on the requested number of threads
-    std::vector<std::thread> v;
-    v.reserve(threads - 1);
+    std::vector<std::thread> threads_vector;
+    threads_vector.reserve(threads - 1);
     for (auto i = threads - 1; i > 0; --i)
-        v.emplace_back(
+        threads_vector.emplace_back(
                 [&ioc]
                 {
                     ioc.run();
                 });
     ioc.run();
 
-    for (auto &t: v)
+    for (auto &t: threads_vector)
         t.join();
 
-    // TODO останавливаем операторов
     operators.stop();
-    thrForOperators.detach();
+    thr_for_operators.join();
 
     return EXIT_SUCCESS;
 }
