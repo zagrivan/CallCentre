@@ -1,7 +1,7 @@
 #include "Operators.h"
 #include "Log.h"
 
-// TODO: возможно tsqueu больше не нужна
+
 namespace call_c
 {
 
@@ -60,7 +60,7 @@ namespace call_c
         operators_[OpId].async_wait(boost::bind(&Operators::on_end_call,
                                                 this, net::placeholders::error,call));
 
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} Время завершения:{} РАЗГОВОР НАЧАЛСЯ",
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} START_OF_CALL completion_time-{}",
                            call->callID, call->CgPn, OpId, tp_to_strHMS(call->dt_completion));
     }
 
@@ -71,12 +71,12 @@ namespace call_c
             LOG_OPERATORS_ERROR("on_end_call: {}", ec.message());
             return;
         }
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} CALL_IS_COMPLETED", call->callID, call->CgPn, call->operatorID);
 
         freeOps_.push_back(call->operatorID);
         call->status = Call::RespStatus::OK;
         Log::WriteCDR(call);
 
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} ЗВОНОК ЗАВЕРШЕН", call->callID, call->CgPn, call->operatorID);
     }
 
 }

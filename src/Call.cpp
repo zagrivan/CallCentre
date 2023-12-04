@@ -29,7 +29,10 @@ namespace call_c
         auto ms = time_point_cast<std::chrono::milliseconds>(tp).time_since_epoch().count() -
                   1000 * time_point_cast<std::chrono::seconds>(tp).time_since_epoch().count();
         s.push_back('.');
-        s.append(std::to_string(ms));
+        std::string ms_s = std::to_string(ms);
+        std::string ms_valid = "000";
+        ms_valid.replace(ms_valid.size() - ms_s.size(), ms_s.size(), ms_s);
+        s.append(ms_valid);
         return s;
     }
 

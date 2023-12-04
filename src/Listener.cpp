@@ -60,7 +60,7 @@ namespace call_c
     }
 
     void Listener::on_accept(beast::error_code ec, tcp::socket socket) {
-        LOG_SERVER_DEBUG("on_accept: {}:{} new connection", socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port());
+        LOG_SERVER_DEBUG("{}:{} new connection", socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port());
         if (ec) {
             LOG_SERVER_ERROR("on_accept: {}", ec.message());
             return; // To avoid infinite loop

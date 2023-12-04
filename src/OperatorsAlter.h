@@ -29,8 +29,9 @@
 
 #include "includes.h"
 
-#include "handle_req_resp.h"
 #include "Log.h"
+#include "Call.h"
+#include "ThreadSafeQueue.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>

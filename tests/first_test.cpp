@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "handle_req_resp.h"
+#include "Call.h"
+#include "Session.h"
 
 
 TEST(ValidationUrlPhoneNumberTest, ValidPhoneNumberTest)

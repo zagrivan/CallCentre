@@ -6,7 +6,8 @@
 #include "Log.h"
 #include "RandGen.h"
 #include "IncomingCallsQueue.h"
-#include "handle_req_resp.h"
+#include "Call.h"
+
 
 using namespace call_c;
 
@@ -98,7 +99,7 @@ TEST_F(IncomingCallsQueueTest, DeletionFromQueueByTimeout)
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
 
-    Log::Init("off", "debug");
+    Log::Init("off", "off");
     RandGen::Init(10, 1, 2, 4);
 
     return RUN_ALL_TESTS();

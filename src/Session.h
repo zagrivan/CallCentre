@@ -44,10 +44,13 @@ namespace call_c {
         beast::tcp_stream stream_;
         beast::flat_buffer buffer_;
         http::request<http::string_body> req_;
-
+        // TODO: безопасно ли?
         static IncomingCallsQueue* incomingCalls_;
     };
 
+    http::message_generator handle_valid_req(uint http_version, const std::string& message);
+    http::message_generator handle_bad_req(uint http_version, const std::string &why);
+    bool isValidPhoneNumber(std::string query_string, std::string& prepared_phone_number);
 }
 
 #endif //CALLCENTRE_SESSION_H

@@ -1,16 +1,17 @@
+#include <regex>
+
 #include "Session.h"
 #include "Log.h"
-#include "handle_req_resp.h"
+
 
 namespace call_c
 {
+
     IncomingCallsQueue* Session::incomingCalls_{nullptr};
 
     Session::Session(tcp::socket &&socket)
             : stream_(std::move(socket))
-    {
-        LOG_SERVER_DEBUG("{} New HTTP connection", stream_.socket().remote_endpoint().address().to_string());
-    }
+    { }
 
     void Session::run()
     {
@@ -80,6 +81,7 @@ namespace call_c
     {
         // send a tcp shutdown
         beast::error_code ec;
+
         stream_.socket().shutdown(tcp::socket::shutdown_both, ec);
 
         if (ec)
@@ -87,9 +89,6 @@ namespace call_c
             LOG_SERVER_ERROR("SOCKET SHUTDOWN ERROR {}", ec.message());
             return;
         }
-
-        LOG_SERVER_DEBUG("{} connection closed successfully",
-                         stream_.socket().remote_endpoint().address().to_string());
     }
 
     http::message_generator Session::handle_request()
@@ -99,7 +98,8 @@ namespace call_c
             LOG_SERVER_INFO("Invalid request: был использован не GET request IP:{}", stream_.socket().remote_endpoint().address().to_string());
             return handle_bad_req(req_.version(), "Usage GET method.");
         }
-        std::string cg_pn{};
+
+        std::string cg_pn{}; // для обработанного номера телефона, запишется в isValidPhoneNumber, если номер валидный
         if (!isValidPhoneNumber(req_.target(), cg_pn))
         {
             LOG_SERVER_INFO("Invalid request: неправильно набран номер: {} IP:{}", req_.target(), stream_.socket().remote_endpoint().address().to_string());
@@ -135,6 +135,74 @@ namespace call_c
         call->dt_completion = std::chrono::system_clock::now();
         Log::WriteCDR(call);
         return handle_valid_req(req_.version(), message);
+    }
+
+
+    // non-member functions
+
+    http::message_generator handle_valid_req(uint http_version, const std::string& message) {
+        // Respond to GET request
+        http::response<http::string_body> res{http::status::ok, http_version};
+        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::content_type, "text/html");
+        res.keep_alive(false);
+        res.body() = message;
+        res.prepare_payload();
+
+        return res;
+    }
+
+    // неправильный ввод символов или номера в url после слэша расценивается как 404
+    http::message_generator handle_bad_req(uint http_version, const std::string& why) {
+        http::response<http::string_body> res{http::status::bad_request, http_version};
+        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+        res.set(http::field::content_type, "text/html");
+        res.keep_alive(false);
+        res.body() = std::string(why);
+        res.prepare_payload();
+        return res;
+    }
+
+    void PreparePhoneNumber(const std::smatch & matches, std::string& valid_phone_number)
+    {
+        int i = 1;
+        if (!matches[1].length() || (matches[1].compare("8") == 0))
+        {
+            valid_phone_number.append("7");
+            i = 2;
+        }
+        for (; i != matches.size(); ++i)
+        {
+            valid_phone_number.append(matches[i].str());
+        }
+    }
+
+    void UrlDecode(std::string& str)
+    {
+        size_t start_pos = 0;
+        const std::string from = "%20";
+        const std::string to = " ";
+        while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+            str.replace(start_pos, from.length(), to);
+            start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+        }
+    }
+
+    bool isValidPhoneNumber(std::string query_string, std::string& prepared_phone_number)
+    {
+        // удаляем пробелы
+        UrlDecode(query_string);
+
+        const std::regex pattern(R"(^/\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})\s*$)");
+        std::smatch matches;
+
+        if (!std::regex_match(query_string, matches, pattern)) {
+            return false;
+        }
+        // приводим номер к общему формату
+        PreparePhoneNumber(matches, prepared_phone_number);
+
+        return true;
     }
 
 }

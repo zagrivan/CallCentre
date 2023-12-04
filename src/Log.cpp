@@ -1,5 +1,7 @@
+#include <sstream>
+#include <iomanip>
 #include "Log.h"
-#include "handle_req_resp.h"
+
 
 namespace call_c
 {
@@ -43,6 +45,8 @@ namespace call_c
 
     void Log::WriteCDR(const std::shared_ptr<Call> &call)
     {
+        using std::setw;
+
         auto dt_req = tp_to_strYMD(call->dt_req) + " " + tp_to_strHMS(call->dt_req);
         auto dt_completion = tp_to_strYMD(call->dt_completion) + " " + tp_to_strHMS(call->dt_completion);
 
@@ -69,8 +73,12 @@ namespace call_c
                 break;
         }
 
-        cdrLog->info("{} ; {} ; {} ; {} ; {} ; {} ; {} ; {};", dt_req, call->callID, call->CgPn, dt_completion, status,
-                     dt_operator_resp, OpID, call_duration);
+        std::stringstream out;
+        out << setw(24) << dt_req << ";" << setw(6) << call->callID << ";" << setw(15) << call->CgPn << ";" << setw(24)
+        << dt_completion << ";" << setw(17) << status << ";" << setw(13) << dt_operator_resp << ";" << setw(4) << OpID
+        << ";" << setw(5) << call_duration;
+
+        cdrLog->info(out.str());
     }
 
 }

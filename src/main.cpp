@@ -5,12 +5,10 @@
 #include "Session.h"
 #include "Listener.h"
 #include "Call.h"
-#include "ThreadSafeQueue.h"
 #include "Log.h"
 #include "Operators.h"
 #include "RandGen.h"
 #include "ReadConfig.h"
-#include "IncomingCallsQueue.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -25,14 +23,11 @@ int main(int argc, char *argv[])
     if (argc != 4)
     {
         std::cerr <<
-                  "Usage: http-server-async <address> <port> <threads>\n" <<
+                  "Usage: CallCentre <address> <port> <threads>\n" <<
                   "Example:\n" <<
-                  "    http-server-async 0.0.0.0 8080 1\n";
+                  "    CallCentre 0.0.0.0 8080 1\n";
         return EXIT_FAILURE;
     }
-
-    const std::string kConfigFileName = "configCallCentre.json";
-    call_c::ReadConfig jsonConf(kConfigFileName);
 
     auto const address = net::ip::make_address(argv[1]);
     auto const port = static_cast<unsigned short>(std::atoi(argv[2]));
@@ -40,6 +35,10 @@ int main(int argc, char *argv[])
 
     // The io_context is required for all I/O
     net::io_context ioc{};
+
+    // read config file
+    const std::string kConfigFileName = "configCallCentre.json";
+    call_c::ReadConfig jsonConf(kConfigFileName);
 
     call_c::Log::Init(jsonConf.log_server_level, jsonConf.log_operators_level);
     call_c::RandGen::Init(jsonConf.rand_gen_erl_shape, jsonConf.rand_gen_erl_scale, jsonConf.timeout_in_queue_min,
@@ -91,3 +90,6 @@ int main(int argc, char *argv[])
 
     return EXIT_SUCCESS;
 }
+
+// TODO: еще раз перечитать задание, почистить инклюды(using namespace), посмотреть pch.h, написать тесты,
+// TODO: написать readme и добавить комментов
