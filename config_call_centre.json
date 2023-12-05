@@ -1,0 +1,10 @@
+{
+  "count_operators": 5,
+  "incoming_queue_size": 5,
+  "log_server_level": "err",
+  "log_operators_level": "info",
+  "rand_gen_erl_shape": 10,
+  "rand_gen_erl_scale": 1,
+  "timeout_in_queue_min": 5,
+  "timeout_in_queue_max": 7
+}
