@@ -5,7 +5,7 @@
 
 namespace call_c
 {
-    Listener::Listener(net::io_context &ioc, tcp::endpoint endpoint, IncomingCallsQueue& incoming_calls)
+    Listener::Listener(net::io_context &ioc, tcp::endpoint endpoint, IncomingCallsQueue &incoming_calls)
             : ioc_(ioc), acceptor_(net::make_strand(ioc)), incoming_calls_(incoming_calls)
     {
         beast::error_code ec;
@@ -43,12 +43,14 @@ namespace call_c
     }
 
     // Start accepting incoming connections
-    void Listener::run() {
+    void Listener::run()
+    {
         LOG_SERVER_INFO("SERVER IS RUNNING");
         do_accept();
     }
 
-    void Listener::do_accept() {
+    void Listener::do_accept()
+    {
         // The new connection gets its own strand
         acceptor_.async_accept(
                 net::make_strand(ioc_),
@@ -59,12 +61,17 @@ namespace call_c
         );
     }
 
-    void Listener::on_accept(beast::error_code ec, tcp::socket socket) {
-        LOG_SERVER_DEBUG("{}:{} new connection", socket.remote_endpoint().address().to_string(), socket.remote_endpoint().port());
-        if (ec) {
+    void Listener::on_accept(beast::error_code ec, tcp::socket socket)
+    {
+        LOG_SERVER_DEBUG("{}:{} new connection", socket.remote_endpoint().address().to_string(),
+                         socket.remote_endpoint().port());
+        if (ec)
+        {
             LOG_SERVER_ERROR("on_accept: {}", ec.message());
             return; // To avoid infinite loop
-        } else {
+        }
+        else
+        {
             // Create the session and run it
             std::make_shared<Session>(std::move(socket), incoming_calls_)
                     ->Run();

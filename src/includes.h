@@ -17,11 +17,9 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
-#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 #include <vector>
 #include <queue>
 

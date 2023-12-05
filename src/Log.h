@@ -1,7 +1,6 @@
 #ifndef CALLCENTRE_LOG_FUNC_H
 #define CALLCENTRE_LOG_FUNC_H
 
-#include <iostream>
 #include <map>
 
 #include "spdlog/spdlog.h"

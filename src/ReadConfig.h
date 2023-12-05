@@ -24,12 +24,12 @@ namespace call_c
         {
             count_operators = data_["count_operators"];
             incoming_queue_size = data_["incoming_queue_size"];
-            timeout_in_queue_min = data_["timeout_in_queue_min"];
-            timeout_in_queue_max = data_["timeout_in_queue_max"];
-            log_server_level = data_["log_server_level"];
-            log_operators_level = data_["log_operators_level"];
-            rand_gen_erl_shape = data_["rand_gen_erl_shape"];
-            rand_gen_erl_scale = data_["rand_gen_erl_scale"];
+            log_server_level = data_["log"]["server_level"];
+            log_operators_level = data_["log"]["operators_level"];
+            timeout_in_queue_min = data_["rand_timeout_in_queue"]["rand_uniform_min"];
+            timeout_in_queue_max = data_["rand_timeout_in_queue"]["rand_uniform_max"];
+            rand_gen_erl_shape = data_["rand_call_duration"]["rand_gen_erl_shape"];
+            rand_gen_erl_scale = data_["rand_call_duration"]["rand_gen_erl_scale"];
         }
 
     public:
@@ -37,10 +37,10 @@ namespace call_c
         size_t incoming_queue_size{};
         std::string log_server_level;
         std::string log_operators_level;
-        double rand_gen_erl_shape{};
-        double rand_gen_erl_scale{};
-        double timeout_in_queue_min{};
-        double timeout_in_queue_max{};
+        double rand_gen_erl_shape{-1};
+        double rand_gen_erl_scale{-1};
+        double timeout_in_queue_min{-1};
+        double timeout_in_queue_max{-1};
 
     private:
         json data_;

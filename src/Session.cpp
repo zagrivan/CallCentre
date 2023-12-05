@@ -119,13 +119,16 @@ namespace call_c
         switch (status)
         {
             case Call::RespStatus::OK:                   // отправляем в ответ call id
+                LOG_OPERATORS_INFO("CallID:{} CgPn:{} WAIT IN QUEUE", call->call_id, call->cg_pn);
                 message.append("CallId: ").append(std::to_string(call->call_id));
                 return HandleValidReq(req_.version(), message);
             case Call::RespStatus::OVERLOAD:
+                LOG_OPERATORS_INFO("CallID:{} CgPn:{} QUEUE OVERLOAD", call->call_id, call->cg_pn);
                 message.append("The queue is overloaded");
                 call->SetCompleteData(Call::RespStatus::OVERLOAD);
                 break;
             case Call::RespStatus::ALREADY_IN_QUEUE:
+                LOG_OPERATORS_INFO("CallID:{} CgPn:{} ALREADY IN QUEUE", call->call_id, call->cg_pn);
                 message.append("This phone number is already waiting");
                 call->SetCompleteData(Call::RespStatus::ALREADY_IN_QUEUE);
                 break;
@@ -134,7 +137,6 @@ namespace call_c
         Log::WriteCDR(call);
         return HandleValidReq(req_.version(), message);
     }
-
 
     // non-member functions
 
@@ -191,7 +193,7 @@ namespace call_c
         // удаляем пробелы
         UrlDecode(query_string);
 
-        const std::regex pattern(R"(^/\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})\s*$)");
+        const std::regex pattern(R"(^/\s*(?:\+?(\d{1}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})\s*$)");
         std::smatch matches;
 
         if (!std::regex_match(query_string, matches, pattern)) {

@@ -62,8 +62,7 @@ namespace call_c
                                         this->OnEndCall(ec, call);
                                     });
 
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} START_OF_CALL",
-                           call->call_id, call->cg_pn, OpId, tpToStrHMS(call->dt_completion));
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} START OF CALL", call->call_id, call->cg_pn, OpId);
 
     }
 

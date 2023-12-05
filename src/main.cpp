@@ -1,6 +1,8 @@
-#include "includes.h"
+#include <thread>
 
 #include <boost/asio/signal_set.hpp>
+
+#include "includes.h"
 
 #include "Listener.h"
 #include "Log.h"

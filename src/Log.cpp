@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+
 #include "Log.h"
 
 
@@ -11,11 +12,11 @@ namespace call_c
 
     std::map<std::string, spdlog::level::level_enum> Log::loggingLevels
             {
-                    {"trace", spdlog::level::trace},
                     {"debug", spdlog::level::debug},
                     {"info",  spdlog::level::info},
                     {"warn",  spdlog::level::warn},
-                    {"err",   spdlog::level::err},
+                    {"error",   spdlog::level::err},
+                    {"critical", spdlog::level::critical},
                     {"off", spdlog::level::off}
             };
 

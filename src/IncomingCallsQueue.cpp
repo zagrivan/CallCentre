@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "IncomingCallsQueue.h"
 
 
@@ -5,6 +6,8 @@ namespace call_c
 {
     IncomingCallsQueue::IncomingCallsQueue(size_t capacity, net::io_context &ioc) : capacity_(capacity)
     {
+        if (capacity <= 0 || capacity > 100000)
+            throw std::length_error("cannot create IncomingCallsQueue larger than 100000 size");
         timers_.reserve(capacity);
         for (int i = 0; i != capacity; ++i)
         {
@@ -34,13 +37,11 @@ namespace call_c
         // проверка на дублирование
         if (map_cg_pn_to_pos_.find(call->cg_pn) != map_cg_pn_to_pos_.end())
         {
-            LOG_OPERATORS_INFO("CallID:{} CgPn:{} ALREADY_IN_QUEUE", call->call_id, call->cg_pn);
             return Call::RespStatus::ALREADY_IN_QUEUE;
         }
 
         if (incoming_calls_.size() >= capacity_)
         {
-            LOG_OPERATORS_INFO("CallID:{} CgPn:{} QUEUE_OVERLOAD", call->call_id, call->cg_pn);
             return Call::RespStatus::OVERLOAD;
         }
 
@@ -60,8 +61,6 @@ namespace call_c
                         {
                             this->OnCallReset(ec, CgPn, iter);
                         });
-
-        LOG_OPERATORS_DEBUG("CallID:{} timer_index:{} IncomingCallsQueue::push", call->call_id, timer_index);
 
         std::unique_lock<std::mutex> ul(mux_blocking); // wake up wait function
         cv_blocking.notify_one();
