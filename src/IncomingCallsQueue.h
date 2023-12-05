@@ -11,10 +11,7 @@
 #include "includes.h"
 #include "Log.h"
 
-namespace beast = boost::beast;         // from <boost/beast.hpp>
-namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
-using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
 namespace call_c
@@ -52,17 +49,15 @@ namespace call_c
 
 
     private:
-        net::io_context& ioc_;
-
         std::list<std::shared_ptr<Call>> incoming_calls_;
 
         std::vector<net::system_timer> timers_;
 
         // contains the indexes of the free timers in the vector
         std::queue<int> free_timers_;
-        // сохраняет связь вызова в очереди с конкретным таймером и с позицией звонка в очереди(через итератор)
-        // также служит для проверки дублирования звонка по его callID
-        // key: CgPn, val: a pair of timers_ index and list iterator
+        // сохраняет связь вызова в очереди с конкретным таймером
+        // также служит для проверки дублирования звонка по его CgPn
+        // key: CgPn, val: timers_ index
         std::unordered_map<std::string, int> map_cg_pn_to_pos_;
 
         size_t capacity_;

@@ -1,9 +1,9 @@
 #include "IncomingCallsQueue.h"
-#include "RandGen.h"
+
 
 namespace call_c
 {
-    IncomingCallsQueue::IncomingCallsQueue(size_t capacity, net::io_context &ioc) : capacity_(capacity), ioc_(ioc)
+    IncomingCallsQueue::IncomingCallsQueue(size_t capacity, net::io_context &ioc) : capacity_(capacity)
     {
         timers_.reserve(capacity);
         for (int i = 0; i != capacity; ++i)
@@ -29,35 +29,39 @@ namespace call_c
 
 
     Call::RespStatus IncomingCallsQueue::push(const std::shared_ptr<Call> &call) {
-        std::scoped_lock lock(mux_queue);
 
+        std::scoped_lock lock(mux_queue);
         // проверка на дублирование
-        if (map_cg_pn_to_pos_.find(call->CgPn) != map_cg_pn_to_pos_.end())
+        if (map_cg_pn_to_pos_.find(call->cg_pn) != map_cg_pn_to_pos_.end())
         {
-            LOG_OPERATORS_INFO("CallID:{} CgPn:{} ALREADY_IN_QUEUE", call->callID, call->CgPn);
+            LOG_OPERATORS_INFO("CallID:{} CgPn:{} ALREADY_IN_QUEUE", call->call_id, call->cg_pn);
             return Call::RespStatus::ALREADY_IN_QUEUE;
         }
 
         if (incoming_calls_.size() >= capacity_)
         {
-            LOG_OPERATORS_INFO("CallID:{} CgPn:{} QUEUE_OVERLOAD", call->callID, call->CgPn);
+            LOG_OPERATORS_INFO("CallID:{} CgPn:{} QUEUE_OVERLOAD", call->call_id, call->cg_pn);
             return Call::RespStatus::OVERLOAD;
         }
+
         // индекс свободного таймера
         int timer_index = free_timers_.front();
         free_timers_.pop();
         // добавляем в саму очередь вызовов
         incoming_calls_.push_back(call);
-        // добавляем в мапу, чтобы связать вызов и индекс таймера в векторе, а также итератор звонка в очереди
-        map_cg_pn_to_pos_.insert({call->CgPn, timer_index});
+        // добавляем в мапу, чтобы связать вызов и индекс таймера в векторе
+        map_cg_pn_to_pos_.insert({call->cg_pn, timer_index});
         // ставлю таймер связанный с этим вызовом, при срабатывании он удалит его из очереди
-        // если успеет сработать до того, как вызовется this->pop()
+        // если успеет сработать до того, как вызовется this->pop() оператором
         timers_[timer_index].expires_after(call->expiration_time);
         timers_[timer_index].async_wait(
-                boost::bind(&IncomingCallsQueue::OnCallReset,
-                            this, net::placeholders::error, call->CgPn, --incoming_calls_.end()));
+                [this, CgPn = call->cg_pn, iter = --incoming_calls_.end()]
+                        (const boost::system::error_code &ec)
+                        {
+                            this->OnCallReset(ec, CgPn, iter);
+                        });
 
-        LOG_OPERATORS_DEBUG("CallID:{} timer_index:{} IncomingCallsQueue::push", call->callID, timer_index);
+        LOG_OPERATORS_DEBUG("CallID:{} timer_index:{} IncomingCallsQueue::push", call->call_id, timer_index);
 
         std::unique_lock<std::mutex> ul(mux_blocking); // wake up wait function
         cv_blocking.notify_one();
@@ -74,8 +78,8 @@ namespace call_c
         auto call = incoming_calls_.front();
         incoming_calls_.pop_front();
 
-        int timer_index = map_cg_pn_to_pos_.at(call->CgPn);
-        map_cg_pn_to_pos_.erase(call->CgPn);
+        int timer_index = map_cg_pn_to_pos_.at(call->cg_pn);
+        map_cg_pn_to_pos_.erase(call->cg_pn);
         // отменяю асинхронную операцию на связанном таймере
         timers_[timer_index].cancel();
 
@@ -120,7 +124,8 @@ namespace call_c
         if (ec == net::error::operation_aborted) // при отмене таймера
         {
             return;
-        } else if (ec)
+        }
+        else if (ec)
         {
             LOG_OPERATORS_ERROR("IncomingCallsQueue::OnCallReset: {}", ec.message());
             return;
@@ -136,13 +141,13 @@ namespace call_c
         map_cg_pn_to_pos_.erase(cg_pn);
 
         std::shared_ptr<Call> call{*iter};
-        call->status = Call::RespStatus::TIMEOUT;
-        call->dt_completion = std::chrono::system_clock::now();
+        call->SetCompleteData(Call::RespStatus::TIMEOUT);
+
         // удалили элемент из очереди
         incoming_calls_.erase(iter);
         free_timers_.push(timer_index);
 
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} TIMEOUT", call->callID, cg_pn);
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} TIMEOUT", call->call_id, cg_pn);
         Log::WriteCDR(call);
     }
 }

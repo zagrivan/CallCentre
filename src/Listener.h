@@ -4,6 +4,7 @@
 
 #include "includes.h"
 #include "Call.h"
+#include "IncomingCallsQueue.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -19,7 +20,7 @@ namespace call_c
     {
 
     public:
-        Listener(net::io_context &ioc, tcp::endpoint endpoint);
+        Listener(net::io_context &ioc, tcp::endpoint endpoint, IncomingCallsQueue& incoming_calls);
 
         // Start accepting incoming connections
         void run();
@@ -32,6 +33,7 @@ namespace call_c
     private:
         net::io_context &ioc_;
         tcp::acceptor acceptor_;
+        IncomingCallsQueue& incoming_calls_;
     };
 
 }

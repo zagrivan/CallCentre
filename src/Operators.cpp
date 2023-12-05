@@ -5,78 +5,82 @@
 namespace call_c
 {
 
-    Operators::Operators(net::io_context &ioc, int countOp, size_t incCallsSize)
-            : ioc_(ioc), incCalls_(incCallsSize, ioc)
+    Operators::Operators(net::io_context &ioc, int countOp, size_t incCallsSize) : incoming_calls_(incCallsSize, ioc)
     {
         operators_.reserve(countOp);
         for (int i = 0; i != countOp; ++i)
         {
-            freeOps_.push_back(i);
+            free_operators_.push_back(i);
             operators_.emplace_back(ioc);
         }
         LOG_OPERATORS_INFO("Number of operators = {}, the queue size = {}", countOp, incCallsSize);
     }
 
-    void Operators::run()
+    void Operators::Run()
     {
         LOG_OPERATORS_INFO("OPERATORS ARE RUNNING");
         while (true)
         {
             // ждем, пока появятся операторы и звонки в очереди
-            freeOps_.wait();
-            incCalls_.wait();
+            // push в очередь через cond var пробудит
+            free_operators_.wait();
+            incoming_calls_.wait();
 
             if (!continue_loop_)
                 return;
 
-            add_call();
+            AddCall();
         }
     }
 
-    void Operators::stop()
+    void Operators::Stop()
     {
         continue_loop_ = false;
-        freeOps_.push_back(0);
-        incCalls_.awake();
+        free_operators_.push_back(0);
+        incoming_calls_.awake();
     }
 
-    void Operators::add_call()
+    void Operators::AddCall()
     {
         std::shared_ptr<Call> call;
         try
         {
-            call = incCalls_.pop();
+            call = incoming_calls_.pop();
         }
         catch (const std::out_of_range& e)
         {
-            LOG_OPERATORS_ERROR("Operators::add_call(): {}", e.what());
+            LOG_OPERATORS_ERROR("Operators::AddCall(): {}", e.what());
             return;
         }
 
-        auto OpId = freeOps_.pop_front();
+        auto OpId = free_operators_.pop_front();
         call->SetOperatorResponseData(OpId);
 
         operators_[OpId].expires_after(call->call_duration);
-        operators_[OpId].async_wait(boost::bind(&Operators::on_end_call,
-                                                this, net::placeholders::error,call));
+        operators_[OpId].async_wait([this, call] (const boost::system::error_code &ec)
+                                    {
+                                        this->OnEndCall(ec, call);
+                                    });
 
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} START_OF_CALL completion_time-{}",
-                           call->callID, call->CgPn, OpId, tp_to_strHMS(call->dt_completion));
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} START_OF_CALL",
+                           call->call_id, call->cg_pn, OpId, tpToStrHMS(call->dt_completion));
+
     }
 
-    void Operators::on_end_call(const boost::system::error_code &ec, std::shared_ptr<Call> call)
+    void Operators::OnEndCall(const boost::system::error_code &ec, const std::shared_ptr<Call>& call)
     {
         if (ec)
         {
-            LOG_OPERATORS_ERROR("on_end_call: {}", ec.message());
+            LOG_OPERATORS_ERROR("OnEndCall: {}", ec.message());
             return;
         }
-        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} CALL_IS_COMPLETED", call->callID, call->CgPn, call->operatorID);
+        LOG_OPERATORS_INFO("CallID:{} CgPn:{} OpId:{} CALL_IS_COMPLETED", call->call_id, call->cg_pn, call->operator_id);
 
-        freeOps_.push_back(call->operatorID);
-        call->status = Call::RespStatus::OK;
+        free_operators_.push_back(call->operator_id);
+
+        call->SetCompleteData(Call::RespStatus::OK);
+
         Log::WriteCDR(call);
-
     }
 
 }

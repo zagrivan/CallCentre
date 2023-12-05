@@ -1,19 +1,12 @@
 #ifndef CALLCENTRE_CALL_H
 #define CALLCENTRE_CALL_H
 
-#include <iostream>
 #include <chrono>
-#include <utility>
 #include <string>
 #include <atomic>
 
 #include "RandGen.h"
 
-/**
- * сущность, описывающая свойства заявки, находящейся в обработке
- * данные отсюда будут использованы для записи в CDR(журнал)
- *
- * */
 
 namespace call_c
 {
@@ -24,34 +17,36 @@ namespace call_c
 
         explicit Call(std::string phone_number);
 
-        void SetOperatorResponseData(int OpId);
+        void SetOperatorResponseData(int op_id);
 
-        uint32_t callID;
-        std::string CgPn; // now I use string, but in the future, string can be replaced with integral type
+        // вызывается при ошибке или окончании звонка
+        void SetCompleteData(RespStatus st);
+
+        static uint32_t getNextCallId() { return next_call_id++; }
+
+        // эти поля заполняются у любого звонка
+        uint32_t call_id;
+        std::string cg_pn;
         RespStatus status{};
-        std::chrono::time_point<std::chrono::system_clock> dt_req;
-        std::chrono::time_point<std::chrono::system_clock> dt_completion{};
+        std::chrono::time_point<std::chrono::system_clock> dt_request;
+        std::chrono::time_point<std::chrono::system_clock> dt_completion;
 
-        int operatorID{};
-        std::chrono::time_point<std::chrono::system_clock> dt_resp{};
+        // эти только у тех, что успешно провели звонок
+        int operator_id{};
+        std::chrono::time_point<std::chrono::system_clock> dt_response;
+
+        // эти поля заполняются случайными значениями из RandGen при инициализации Call,
         std::chrono::milliseconds call_duration;
-
         std::chrono::milliseconds expiration_time;
-//        std::chrono::time_point<std::chrono::system_clock> dt_expiry{};
-
-        static uint32_t getNextCallId()
-        {
-            return next_call_id++;
-        }
 
     private:
         static std::atomic<uint32_t> next_call_id;
+
     };
 
-
-    std::string tp_to_strHMS(const std::chrono::time_point<std::chrono::system_clock> &tp);
-    std::string tp_to_strYMD(const std::chrono::time_point<std::chrono::system_clock> &tp);
-
+    // нужны для вывода в логер date time полей из Call
+    std::string tpToStrHMS(const std::chrono::time_point<std::chrono::system_clock> &tp);
+    std::string tpToStrYMD(const std::chrono::time_point<std::chrono::system_clock> &tp);
 }
 
 #endif //CALLCENTRE_CALL_H

@@ -47,18 +47,19 @@ namespace call_c
     {
         using std::setw;
 
-        auto dt_req = tp_to_strYMD(call->dt_req) + " " + tp_to_strHMS(call->dt_req);
-        auto dt_completion = tp_to_strYMD(call->dt_completion) + " " + tp_to_strHMS(call->dt_completion);
+        auto dt_req = tpToStrYMD(call->dt_request) + " " + tpToStrHMS(call->dt_request);
+        auto dt_completion = tpToStrYMD(call->dt_completion) + " " + tpToStrHMS(call->dt_completion);
 
         std::string dt_operator_resp = "-";
         std::string OpID = "-";
         std::string call_duration = "-";
         std::string status;
+
         switch (call->status)
         {
             case Call::RespStatus::OK:
-                dt_operator_resp = tp_to_strHMS(call->dt_resp);
-                OpID = std::to_string(call->operatorID);
+                dt_operator_resp = tpToStrHMS(call->dt_response);
+                OpID = std::to_string(call->operator_id);
                 call_duration = std::to_string(duration_cast<std::chrono::seconds>(call->call_duration).count());
                 status = "OK";
                 break;
@@ -74,7 +75,7 @@ namespace call_c
         }
 
         std::stringstream out;
-        out << setw(24) << dt_req << ";" << setw(6) << call->callID << ";" << setw(15) << call->CgPn << ";" << setw(24)
+        out << setw(24) << dt_req << ";" << setw(6) << call->call_id << ";" << setw(15) << call->cg_pn << ";" << setw(24)
         << dt_completion << ";" << setw(17) << status << ";" << setw(13) << dt_operator_resp << ";" << setw(4) << OpID
         << ";" << setw(5) << call_duration;
 

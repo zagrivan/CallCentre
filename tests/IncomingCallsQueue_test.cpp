@@ -68,7 +68,7 @@ TEST_F(IncomingCallsQueueTest, QueuePushAndPopIsWorks)
     for (int i = 0; i != capacity_; ++i)
     {
         auto call = queue_.pop();
-        ASSERT_EQ(call->CgPn, std::to_string(i + 100));
+        ASSERT_EQ(call->cg_pn, std::to_string(i + 100));
     }
     ASSERT_EQ(queue_.size(), 0);
 }
@@ -79,7 +79,7 @@ TEST_F(IncomingCallsQueueTest, QueuePushReturnCorrectEnum)
     {
         EXPECT_EQ(queue_.push(std::make_shared<Call>(std::to_string(i + 100))), Call::RespStatus::OK);
     }
-    EXPECT_EQ(queue_.push(std::make_shared<Call>(queue_.front()->CgPn)), Call::RespStatus::ALREADY_IN_QUEUE);
+    EXPECT_EQ(queue_.push(std::make_shared<Call>(queue_.front()->cg_pn)), Call::RespStatus::ALREADY_IN_QUEUE);
     EXPECT_EQ(queue_.push(std::make_shared<Call>(std::to_string(capacity_ + 100))), Call::RespStatus::OVERLOAD);
 }
 

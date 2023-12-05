@@ -20,36 +20,34 @@ namespace call_c {
 
     public:
         // Take ownership of the stream
-        explicit Session(tcp::socket &&socket);
+        Session(tcp::socket &&socket, IncomingCallsQueue& incoming_calls);
         // starts the asynchronous operation
-        void run();
+        void Run();
 
-        static void setIncomingCallsQueue(IncomingCallsQueue* incomingCalls) { incomingCalls_ = incomingCalls; }
     private:
-        void do_read();
+        void DoRead();
 
-        void on_read(beast::error_code ec, std::size_t bytes_transferred);
+        void OnRead(beast::error_code ec, std::size_t bytes_transferred);
 
-        void send_response(http::message_generator &&msg);
+        void SendResponse(http::message_generator &&msg);
 
-        void on_write(beast::error_code ec, std::size_t bytes_transferred);
+        void OnWrite(beast::error_code ec, std::size_t bytes_transferred);
 
-        void do_close();
+        void DoClose();
 
-        http::message_generator handle_request();
+        http::message_generator HandleRequest();
 
-        http::message_generator AddToQueue(std::shared_ptr<Call> call);
+        http::message_generator AddToQueue(const std::shared_ptr<Call>& call);
 
     private:
         beast::tcp_stream stream_;
         beast::flat_buffer buffer_;
         http::request<http::string_body> req_;
-        // TODO: безопасно ли?
-        static IncomingCallsQueue* incomingCalls_;
+        IncomingCallsQueue& incoming_calls_;
     };
 
-    http::message_generator handle_valid_req(uint http_version, const std::string& message);
-    http::message_generator handle_bad_req(uint http_version, const std::string &why);
+    http::message_generator HandleValidReq(uint http_version, const std::string& message);
+    http::message_generator HandleBadReq(uint http_version, const std::string& message);
     bool isValidPhoneNumber(std::string query_string, std::string& prepared_phone_number);
 }
 

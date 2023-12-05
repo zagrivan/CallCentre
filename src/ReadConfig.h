@@ -15,27 +15,35 @@ namespace call_c
         explicit ReadConfig(const std::string& configFileName)
         {
             std::ifstream f{configFileName};
-            json data = json::parse(f);
+            data_ = json::parse(f);
+            ReadJson();
+        }
 
-            count_operators = data["count_operators"];
-            incoming_queue_size = data["incoming_queue_size"];
-            timeout_in_queue_min = data["timeout_in_queue_min"];
-            timeout_in_queue_max = data["timeout_in_queue_max"];
-            log_server_level = data["log_server_level"];
-            log_operators_level = data["log_operators_level"];
-            rand_gen_erl_shape = data["rand_gen_erl_shape"];
-            rand_gen_erl_scale = data["rand_gen_erl_scale"];
+    private:
+        void ReadJson()
+        {
+            count_operators = data_["count_operators"];
+            incoming_queue_size = data_["incoming_queue_size"];
+            timeout_in_queue_min = data_["timeout_in_queue_min"];
+            timeout_in_queue_max = data_["timeout_in_queue_max"];
+            log_server_level = data_["log_server_level"];
+            log_operators_level = data_["log_operators_level"];
+            rand_gen_erl_shape = data_["rand_gen_erl_shape"];
+            rand_gen_erl_scale = data_["rand_gen_erl_scale"];
         }
 
     public:
-        int count_operators;
-        size_t incoming_queue_size;
+        int count_operators{};
+        size_t incoming_queue_size{};
         std::string log_server_level;
         std::string log_operators_level;
-        double rand_gen_erl_shape;
-        double rand_gen_erl_scale;
-        double timeout_in_queue_min;
-        double timeout_in_queue_max;
+        double rand_gen_erl_shape{};
+        double rand_gen_erl_scale{};
+        double timeout_in_queue_min{};
+        double timeout_in_queue_max{};
+
+    private:
+        json data_;
     };
 }
 

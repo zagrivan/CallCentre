@@ -7,13 +7,11 @@
 namespace call_c
 {
 
-    IncomingCallsQueue* Session::incomingCalls_{nullptr};
-
-    Session::Session(tcp::socket &&socket)
-            : stream_(std::move(socket))
+    Session::Session(tcp::socket &&socket, IncomingCallsQueue& incoming_calls)
+            : stream_(std::move(socket)), incoming_calls_(incoming_calls)
     { }
 
-    void Session::run()
+    void Session::Run()
     {
         // We need to be executing within a strand to perform async operations
         // on the I/O objects in this session. Although not strictly necessary
@@ -21,11 +19,11 @@ namespace call_c
         // thread-safe by default.
         net::dispatch(
                 stream_.get_executor(),
-                beast::bind_front_handler(&Session::do_read, shared_from_this())
+                beast::bind_front_handler(&Session::DoRead, shared_from_this())
         );
     }
 
-    void Session::do_read()
+    void Session::DoRead()
     {
         // Make the request empty before reading,
         // otherwise the operation behavior is undefined.
@@ -36,15 +34,15 @@ namespace call_c
 
         // Read a request
         http::async_read(stream_, buffer_, req_,
-                         beast::bind_front_handler(&Session::on_read, shared_from_this()));
+                         beast::bind_front_handler(&Session::OnRead, shared_from_this()));
     }
 
-    void Session::on_read(beast::error_code ec, std::size_t bytes_transferred)
+    void Session::OnRead(beast::error_code ec, std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
         // This means they closed the connection
         if (ec == http::error::end_of_stream)
-            return do_close();
+            return DoClose();
 
         if (ec)
         {
@@ -53,20 +51,20 @@ namespace call_c
         }
         // Send the response
         // здесь обрабатывается http request
-        send_response(handle_request());
+        SendResponse(HandleRequest());
     }
 
-    void Session::send_response(http::message_generator &&msg)
+    void Session::SendResponse(http::message_generator &&msg)
     {
         // Write the response
         beast::async_write(
                 stream_,
                 std::move(msg),
-                beast::bind_front_handler(&Session::on_write, shared_from_this())
+                beast::bind_front_handler(&Session::OnWrite, shared_from_this())
         );
     }
 
-    void Session::on_write(beast::error_code ec, std::size_t bytes_transferred)
+    void Session::OnWrite(beast::error_code ec, std::size_t bytes_transferred)
     {
         boost::ignore_unused(bytes_transferred);
         if (ec)
@@ -74,10 +72,10 @@ namespace call_c
             LOG_SERVER_ERROR("WRITE TO SOCKET ERROR {}", ec.message());
             return;
         }
-        do_close();
+        DoClose();
     }
 
-    void Session::do_close()
+    void Session::DoClose()
     {
         // send a tcp shutdown
         beast::error_code ec;
@@ -91,19 +89,19 @@ namespace call_c
         }
     }
 
-    http::message_generator Session::handle_request()
+    http::message_generator Session::HandleRequest()
     {
         if (req_.method() != http::verb::get)
         {
-            LOG_SERVER_INFO("Invalid request: был использован не GET request IP:{}", stream_.socket().remote_endpoint().address().to_string());
-            return handle_bad_req(req_.version(), "Usage GET method.");
+            LOG_SERVER_INFO("Invalid request: no GET request IP:{}", stream_.socket().remote_endpoint().address().to_string());
+            return HandleBadReq(req_.version(), "Usage GET method.");
         }
 
         std::string cg_pn{}; // для обработанного номера телефона, запишется в isValidPhoneNumber, если номер валидный
         if (!isValidPhoneNumber(req_.target(), cg_pn))
         {
-            LOG_SERVER_INFO("Invalid request: неправильно набран номер: {} IP:{}", req_.target(), stream_.socket().remote_endpoint().address().to_string());
-            return handle_bad_req(req_.version(), "Invalid phone number.");
+            LOG_SERVER_INFO("Invalid phone number: the number was incorrectly dialed: {} IP:{}", req_.target(), stream_.socket().remote_endpoint().address().to_string());
+            return HandleBadReq(req_.version(), "Invalid phone number.");
         }
 
         auto call = std::make_shared<Call>(cg_pn);
@@ -111,36 +109,36 @@ namespace call_c
         return AddToQueue(call);
     }
 
-    http::message_generator Session::AddToQueue(std::shared_ptr<Call> call)
+    http::message_generator Session::AddToQueue(const std::shared_ptr<Call>& call)
     {
         // добавляем в очередь
-        Call::RespStatus status = incomingCalls_->push(call);
+        Call::RespStatus status = incoming_calls_.push(call);
+        // это сообщение будет отправлено клиенту
         std::string message;
 
         switch (status)
         {
-            case Call::RespStatus::OK:
-                message.append("CallId: ").append(std::to_string(call->callID));
-                return handle_valid_req(req_.version(), message);
+            case Call::RespStatus::OK:                   // отправляем в ответ call id
+                message.append("CallId: ").append(std::to_string(call->call_id));
+                return HandleValidReq(req_.version(), message);
             case Call::RespStatus::OVERLOAD:
                 message.append("The queue is overloaded");
-                call->status = Call::RespStatus::OVERLOAD;
+                call->SetCompleteData(Call::RespStatus::OVERLOAD);
                 break;
             case Call::RespStatus::ALREADY_IN_QUEUE:
                 message.append("This phone number is already waiting");
-                call->status = Call::RespStatus::ALREADY_IN_QUEUE;
+                call->SetCompleteData(Call::RespStatus::ALREADY_IN_QUEUE);
                 break;
         }
 
-        call->dt_completion = std::chrono::system_clock::now();
         Log::WriteCDR(call);
-        return handle_valid_req(req_.version(), message);
+        return HandleValidReq(req_.version(), message);
     }
 
 
     // non-member functions
 
-    http::message_generator handle_valid_req(uint http_version, const std::string& message) {
+    http::message_generator HandleValidReq(uint http_version, const std::string& message) {
         // Respond to GET request
         http::response<http::string_body> res{http::status::ok, http_version};
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
@@ -153,7 +151,7 @@ namespace call_c
     }
 
     // неправильный ввод символов или номера в url после слэша расценивается как 404
-    http::message_generator handle_bad_req(uint http_version, const std::string& why) {
+    http::message_generator HandleBadReq(uint http_version, const std::string& why) {
         http::response<http::string_body> res{http::status::bad_request, http_version};
         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
         res.set(http::field::content_type, "text/html");

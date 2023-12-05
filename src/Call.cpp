@@ -1,26 +1,29 @@
 #include "Call.h"
 
+
 namespace call_c
 {
     std::atomic<uint32_t> Call::next_call_id = 100;
 
-    Call::Call(std::string phone_number) : callID(getNextCallId()), CgPn(std::move(phone_number)),
-                                           dt_req(std::chrono::system_clock::now()),
-                                           call_duration(RandGen::getRandErlang()),
-                                           expiration_time(RandGen::getRandUniform())
-    {
+    Call::Call(std::string phone_number)
+            : call_id(getNextCallId()), cg_pn(std::move(phone_number)), dt_request(std::chrono::system_clock::now()),
+              call_duration(RandGen::getRandErlang()), expiration_time(RandGen::getRandUniform())
+    {}
 
+    void Call::SetOperatorResponseData(int op_id)
+    {
+        operator_id = op_id;
+        dt_response = std::chrono::system_clock::now();
     }
 
-    void Call::SetOperatorResponseData(int OpId)
+    void Call::SetCompleteData(RespStatus st)
     {
-        operatorID = OpId;
-        dt_resp = std::chrono::system_clock::now();
-        dt_completion = dt_resp + call_duration;
+        status = st;
+        dt_completion = std::chrono::system_clock::now();
     }
 
 
-    std::string tp_to_strHMS(const std::chrono::time_point<std::chrono::system_clock> &tp) {
+    std::string tpToStrHMS(const std::chrono::time_point<std::chrono::system_clock> &tp) {
         std::string s{};
         s.resize(70);
         std::time_t tp_c = std::chrono::system_clock::to_time_t(tp);
@@ -36,7 +39,7 @@ namespace call_c
         return s;
     }
 
-    std::string tp_to_strYMD(const std::chrono::time_point<std::chrono::system_clock> &tp)
+    std::string tpToStrYMD(const std::chrono::time_point<std::chrono::system_clock> &tp)
     {
         std::string s{};
         s.resize(70);
