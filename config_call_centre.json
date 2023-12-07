@@ -11,6 +11,6 @@
   },
   "log": {
     "server_level": "error",
-    "operators_level": "debug"
+    "operators_level": "info"
   }
 }
