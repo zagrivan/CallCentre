@@ -10,7 +10,7 @@
     "rand_uniform_max": 7
   },
   "log": {
-    "server_level": "err",
+    "server_level": "error",
     "operators_level": "debug"
   }
 }
