@@ -13,9 +13,19 @@
 
 namespace net = boost::asio;            // from <boost/asio.hpp>
 
+/*
+ * Класс выполняет стандартные функции очереди и эмулирует сброс звонка во время ожидания ответа от оператора.
+ * Под очередь выбрал std::list, чтобы можно было удобно удалять звонок при сбросе из любой части очереди.
+ * Для эмуляции сброса используются boost::asio::system_timer.
+ * К каждому звонку привязывается не занятый таймер из std::vector<net::system_timer> timers_ и ставится на рандомное время.
+ * Если оператор успеет схватить звонок до истечения таймера, то таймер отменится,
+ * иначе выполнится completion handler OnCallReset(...) и удалит звонок из очереди.
+ */
+
 
 namespace call_c
 {
+
     class IncomingCallsQueue
     {
         using ListIterator = std::list<std::shared_ptr<Call>>::iterator;
@@ -39,6 +49,7 @@ namespace call_c
 
         void clear();
 
+        // для ожидания появления звонка в операторах
         void wait();
 
         void awake();
@@ -53,7 +64,7 @@ namespace call_c
 
         std::vector<net::system_timer> timers_;
 
-        // contains the indexes of the free timers in the vector
+        // содержит индексы свободных таймеров
         std::queue<int> free_timers_;
         // сохраняет связь вызова в очереди с конкретным таймером
         // также служит для проверки дублирования звонка по его CgPn
@@ -64,6 +75,7 @@ namespace call_c
 
         std::mutex mux_queue;
 
+        // используются в wait()
         std::condition_variable cv_blocking;
         std::mutex mux_blocking;
 

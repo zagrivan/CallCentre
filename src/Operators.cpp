@@ -5,15 +5,15 @@
 namespace call_c
 {
 
-    Operators::Operators(net::io_context &ioc, int countOp, size_t incCallsSize) : incoming_calls_(incCallsSize, ioc)
+    Operators::Operators(net::io_context &ioc, int count_op, size_t incCallsSize) : incoming_calls_(incCallsSize, ioc)
     {
-        operators_.reserve(countOp);
-        for (int i = 0; i != countOp; ++i)
+        operators_.reserve(count_op);
+        for (int i = 0; i != count_op; ++i)
         {
             free_operators_.push_back(i);
             operators_.emplace_back(ioc);
         }
-        LOG_OPERATORS_INFO("Number of operators = {}, the queue size = {}", countOp, incCallsSize);
+        LOG_OPERATORS_INFO("Number of operators = {}, the queue size = {}", count_op, incCallsSize);
     }
 
     void Operators::Run()
@@ -22,7 +22,7 @@ namespace call_c
         while (true)
         {
             // ждем, пока появятся операторы и звонки в очереди
-            // push в очередь через cond var пробудит
+            // push в очередь пробудит
             free_operators_.wait();
             incoming_calls_.wait();
 

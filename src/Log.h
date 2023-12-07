@@ -26,7 +26,9 @@ namespace call_c
         static std::map<std::string, spdlog::level::level_enum> loggingLevels;
 
         static std::shared_ptr<spdlog::logger> cdrLog;
+        // лог серверной части и http
         static std::shared_ptr<spdlog::logger> serverLog;
+        // лог очереди входящих звонков и операторов
         static std::shared_ptr<spdlog::logger> operatorsLog;
     };
 

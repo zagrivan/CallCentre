@@ -111,14 +111,14 @@ namespace call_c
 
     http::message_generator Session::AddToQueue(const std::shared_ptr<Call>& call)
     {
-        // добавляем в очередь
         Call::RespStatus status = incoming_calls_.push(call);
+
         // это сообщение будет отправлено клиенту
         std::string message;
 
         switch (status)
         {
-            case Call::RespStatus::OK:                   // отправляем в ответ call id
+            case Call::RespStatus::OK:                   // отправляем в ответ просто call id
                 LOG_OPERATORS_INFO("CallID:{} CgPn:{} WAIT IN QUEUE", call->call_id, call->cg_pn);
                 message.append("CallId: ").append(std::to_string(call->call_id));
                 return HandleValidReq(req_.version(), message);
@@ -137,6 +137,7 @@ namespace call_c
         Log::WriteCDR(call);
         return HandleValidReq(req_.version(), message);
     }
+
 
     // non-member functions
 
@@ -163,9 +164,11 @@ namespace call_c
         return res;
     }
 
+
     void PreparePhoneNumber(const std::smatch & matches, std::string& valid_phone_number)
     {
         int i = 1;
+        // если код страны пустой или равен 8, то ставим 7
         if (!matches[1].length() || (matches[1].compare("8") == 0))
         {
             valid_phone_number.append("7");
@@ -177,6 +180,7 @@ namespace call_c
         }
     }
 
+    // меняет %20 на пробелы
     void UrlDecode(std::string& str)
     {
         size_t start_pos = 0;
@@ -192,7 +196,7 @@ namespace call_c
     {
         // удаляем пробелы
         UrlDecode(query_string);
-
+        // под код страны одна цифра, код страны не обязателен
         const std::regex pattern(R"(^/\s*(?:\+?(\d{1}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})\s*$)");
         std::smatch matches;
 

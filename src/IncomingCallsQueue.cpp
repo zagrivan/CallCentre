@@ -122,6 +122,7 @@ namespace call_c
     {
         if (ec == net::error::operation_aborted) // при отмене таймера
         {
+            LOG_OPERATORS_DEBUG("CgPn:{} Timer in incoming calls queue is cancelled");
             return;
         }
         else if (ec)

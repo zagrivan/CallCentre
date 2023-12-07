@@ -16,6 +16,7 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace call_c {
 
     // Handles an HTTP server connection
+    // and push Call to incoming calls queue  if the request is correct
     class Session : public std::enable_shared_from_this<Session> {
 
     public:
@@ -35,8 +36,10 @@ namespace call_c {
 
         void DoClose();
 
+        // проводит валидацию запроса и введенного номера телефона
         http::message_generator HandleRequest();
 
+        // пытается добавить в incoming calls queue
         http::message_generator AddToQueue(const std::shared_ptr<Call>& call);
 
     private:
@@ -46,8 +49,10 @@ namespace call_c {
         IncomingCallsQueue& incoming_calls_;
     };
 
+    // генерируют ответные сообщения
     http::message_generator HandleValidReq(uint http_version, const std::string& message);
     http::message_generator HandleBadReq(uint http_version, const std::string& message);
+    // если номер корректный, то в prepared_phone_number записывается номер приведенный к общему формату
     bool isValidPhoneNumber(std::string query_string, std::string& prepared_phone_number);
 }
 

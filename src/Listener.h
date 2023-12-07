@@ -33,6 +33,7 @@ namespace call_c
     private:
         net::io_context &ioc_;
         tcp::acceptor acceptor_;
+        // для передачи объекту Session, когда придет запрос
         IncomingCallsQueue& incoming_calls_;
     };
 

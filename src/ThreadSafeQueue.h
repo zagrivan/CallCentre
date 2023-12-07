@@ -9,12 +9,13 @@
 
 namespace call_c {
 
+    // thread safe queue на mutex
     template<typename T>
-    class tsqueue {
+    class TSQueue {
     public:
-        tsqueue() = default;
+        TSQueue() = default;
 
-        tsqueue(const tsqueue<T> &) = delete; // non copied
+        TSQueue(const TSQueue<T> &) = delete; // non copied
 
     public:
         const T &front() {
@@ -80,6 +81,7 @@ namespace call_c {
             return t;
         }
 
+        // нужна для ожидания в Operators
         void wait()
         {
             while (empty()) {
